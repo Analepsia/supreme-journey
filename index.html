@@ -1,3 +1,1113 @@
 <!doctype html>
-<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>物理手记 · 斜面问题</title><meta name="description" content="平板优先的高中物理备课工作台"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='9' fill='%232d6154'/%3E%3Cpath d='M9 30h23L9 12z' fill='none' stroke='%23fff' stroke-width='2'/%3E%3C/svg%3E"><link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="cards.css"><link rel="stylesheet" href="blue-deck.css"></head>
-<body><div id="app"></div><dialog id="modal"></dialog><div id="toast" role="status"></div><script src="data.js"></script><script src="board-diagrams.js"></script><input id="quick-images" type="file" accept="image/*" multiple hidden aria-label="选择图片"><div id="card-delete-zone" role="status" hidden>拖到这里删除</div><script src="card-workbench.js"></script><script src="card-gestures.js"></script><script src="publish.js"></script><script src="app.js"></script></body></html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>物理手记 · 斜面问题</title><meta name="description" content="平板优先的高中物理备课工作台"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='9' fill='%232d6154'/%3E%3Cpath d='M9 30h23L9 12z' fill='none' stroke='%23fff' stroke-width='2'/%3E%3C/svg%3E"><style>:root{--paper:#f7f7f2;
+--ink:#273b35;
+--muted:#7a8179;
+--green:#2d6154;
+--line:#dedfd5;
+--pale:#edf1e8;
+--gold:#aa7933}
+*{box-sizing:border-box}
+body{margin:0;
+background:var(--paper);
+color:var(--ink);
+font:15px/1.65 'Microsoft YaHei','PingFang SC',sans-serif}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer;
+color:inherit;
+border:1px solid transparent;
+background:transparent;
+border-radius:7px;
+min-height:44px;
+padding:8px 13px;
+touch-action:manipulation}
+button:hover{background:#e6ebe2}
+button:focus-visible,a:focus-visible{outline:3px solid #a6bd81;
+outline-offset:2px}
+button:disabled{opacity:.35;
+cursor:default}
+input,textarea,select{width:100%;
+padding:11px;
+border:1px solid var(--line);
+border-radius:7px;
+background:white;
+color:var(--ink)}
+textarea{min-height:130px;
+resize:vertical}
+h1,h2,h3,p{margin:0}
+h1{font:600 34px/1.4 'Songti SC','SimSun',serif;
+letter-spacing:2px}
+h2{font-size:17px}
+h3{font-size:16px}
+small,.muted{color:var(--muted);
+font-size:12px}
+.primary{background:var(--green);
+color:white}
+.primary:hover{background:#234d42}
+.outline{border-color:var(--line);
+background:#fff}
+.brand{display:flex;
+align-items:center;
+gap:11px;
+font-size:19px;
+letter-spacing:2px;
+font-weight:600}
+.brand-symbol{display:grid;
+place-items:center;
+background:var(--green);
+color:white;
+width:36px;
+height:36px;
+border-radius:8px;
+font-size:24px}
+.shell{display:grid;
+grid-template-columns:236px minmax(0,1fr);
+min-height:100vh}
+.shell.closed{grid-template-columns:0 minmax(0,1fr)}
+aside.tree{background:#eeefe7;
+border-right:1px solid var(--line);
+padding:27px 16px;
+position:sticky;
+top:0;
+height:100vh;
+overflow:auto}
+.closed aside.tree{visibility:hidden;
+padding:0;
+overflow:hidden}
+.tree .brand{margin:0 7px 38px}
+.tree-caption{display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:12px;
+padding-left:10px;
+font-size:12px;
+color:var(--muted);
+letter-spacing:2px}
+.tree-row{display:flex;
+align-items:center;
+border-radius:6px;
+margin:3px 0}
+.tree-row.active{background:#dce6d8;
+color:#254e3e;
+font-weight:600}
+.tree-row .node{flex:1;
+text-align:left;
+padding-left:2px;
+white-space:nowrap;
+font-size:13px}
+.tree-row .branch{width:38px;
+padding:0;
+flex-shrink:0}
+.tree-footer{margin:40px 10px 0;
+border-top:1px solid var(--line);
+padding-top:20px;
+font-size:12px;
+color:var(--muted)}
+main{min-width:0}
+.topbar{display:flex;
+gap:10px;
+align-items:center;
+justify-content:space-between;
+padding:12px 30px;
+border-bottom:1px solid var(--line);
+background:#fafaf6;
+position:sticky;
+top:0;
+z-index:5}
+.topbar-left{display:flex;
+align-items:center;
+gap:12px}
+.top-actions{display:flex;
+gap:5px}
+.save-status{font-size:12px;
+color:var(--muted)}
+.page{max-width:1340px;
+margin:auto;
+padding:18px 34px 70px}
+.breadcrumb{font-size:12px;
+color:var(--muted);
+display:flex;
+align-items:center;
+flex-wrap:wrap;
+gap:2px;
+margin-bottom:8px}
+.breadcrumb button{font-size:12px;
+padding:2px 5px;
+min-height:32px}
+.heading{display:flex;
+justify-content:space-between;
+align-items:center;
+gap:12px}
+.eyebrow{font:11px Georgia,serif;
+letter-spacing:2px;
+color:var(--green);
+margin-bottom:5px}
+.tags{display:flex;
+gap:7px;
+flex-wrap:wrap;
+margin-top:12px}
+.tag{font-size:11px;
+background:#eaf0e6;
+color:#62745e;
+border-radius:4px;
+padding:3px 8px}
+.template-bar{display:flex;
+align-items:center;
+justify-content:space-between;
+gap:12px;
+margin:17px 0 16px;
+border-bottom:1px solid var(--line);
+padding-bottom:13px}
+.tabs{display:flex;
+gap:5px;
+background:#eaede4;
+padding:4px;
+border-radius:9px}
+.tabs button{font-size:13px;
+min-height:40px;
+padding:8px 15px}
+.tabs .selected{background:#fff;
+box-shadow:0 1px 4px #23382413;
+color:var(--green);
+font-weight:600}
+.template-hint{font-size:12px;
+color:var(--muted)}
+.blocks{display:grid;
+grid-template-columns:1fr 1fr;
+gap:17px 24px;
+align-items:start}
+.block{min-width:0;
+border-top:1px solid var(--line);
+padding-top:11px;
+scroll-margin-top:85px}
+.block-head{display:flex;
+align-items:center;
+justify-content:space-between;
+gap:5px}
+.collapse{display:flex;
+gap:12px;
+align-items:center;
+text-align:left;
+padding:0 3px;
+width:100%}
+.block-no{font:12px Georgia;
+color:#94a18c}
+.chev{margin-left:auto;
+color:#8d9488;
+font-size:13px}
+.block-body{padding:10px 4px 9px}
+.block[data-type=flow],.block[data-type=formula],.block[data-type=questions],.block[data-type=steps]{grid-column:1/-1}
+.block[data-type=flow]{background:#e9eee3;
+border:1px solid #dce4d4;
+border-radius:9px;
+padding:11px 16px}
+.flow{display:flex;
+align-items:center;
+gap:10px;
+justify-content:space-between;
+padding:5px 0}
+.flow span{font-size:13px}
+.flow b{color:#8d9f7a;
+font-weight:400}
+.bullets{padding:0;
+margin:0;
+list-style:none}
+.bullets li{margin:7px 0;
+padding-left:21px;
+position:relative;
+font-size:13px}
+.bullets li:before{content:'✓';
+position:absolute;
+left:0;
+color:#799268}
+.diagram-wrap{background:#f0f2ec;
+border-radius:7px;
+display:flex;
+align-items:center;
+justify-content:center}
+.diagram-wrap svg{max-height:150px;
+width:100%}
+.diagram-caption{font-size:11px;
+color:var(--muted);
+margin-top:8px}
+.formula-grid{display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:12px}
+.formula{border:1px solid #e2e4d9;
+background:#fffef9;
+border-radius:7px;
+padding:13px 17px}
+.formula small{display:block}
+.math{font:italic 27px/1.5 Georgia,'Times New Roman',serif;
+letter-spacing:.5px}
+.formula-note{font-size:12px;
+color:var(--muted);
+margin-top:9px}
+.steps{display:flex;
+gap:12px}
+.step{flex:1;
+min-width:0;
+font-size:12px;
+padding-left:11px;
+border-left:2px solid #d4dfc6}
+.step b{display:block;
+font-size:13px;
+margin-bottom:5px}
+.question-filters{display:flex;
+gap:6px;
+flex-wrap:wrap;
+margin:0 0 12px}
+.question-filters button{min-height:40px;
+padding:5px 14px;
+font-size:12px}
+.question-filters .selected{background:#e1e9d9;
+color:#34582e}
+.question-grid{display:grid;
+grid-template-columns:repeat(3,minmax(0,1fr));
+gap:12px}
+.question{border:1px solid var(--line);
+background:#fffef9;
+border-radius:8px;
+overflow:hidden;
+min-width:0}
+.question-top{padding:10px 15px;
+background:#eef0e8;
+display:flex;
+justify-content:space-between;
+font-size:11px;
+color:#737f65}
+.question-content{padding:14px}
+.question h3{font-size:14px;
+margin-bottom:8px}
+.question p{font-size:12px;
+white-space:pre-line}
+.question .question-text{min-height:90px}
+.question .why{margin-top:10px;
+padding-top:9px;
+border-top:1px dashed var(--line);
+color:#7b816e}
+.question-actions{display:flex;
+flex-wrap:wrap;
+gap:1px;
+margin-top:9px}
+.question-actions button{font-size:11px;
+padding:7px}
+.question-actions button:first-child{color:var(--green)}
+.analysis{background:#eff4e8;
+padding:11px;
+margin-top:9px;
+border-radius:5px}
+.mistake-row{padding:9px 12px;
+margin-bottom:7px;
+border-left:3px solid #c6a464;
+background:#f5efe2;
+font-size:12px}
+.mistake-row b{display:block;
+color:#8c6229}
+.board-teaser{display:flex;
+justify-content:space-between;
+align-items:center;
+background:#e8eee6;
+padding:15px;
+border-radius:7px}
+.board-teaser p{font-size:12px;
+color:var(--muted)}
+.edit-controls{display:flex;
+flex-wrap:wrap;
+gap:4px;
+margin:8px 0;
+padding:6px;
+background:#edf0e7;
+border-radius:6px}
+.edit-controls button{font-size:12px;
+padding:6px 10px;
+border:1px solid #d7dfcf;
+background:#fff}
+.drag-handle{touch-action:none}
+.dragging{opacity:.5;
+outline:2px dashed var(--green)}
+.editing-banner{font-size:12px;
+background:#e6ecdf;
+padding:10px 15px;
+border-radius:7px;
+margin-bottom:16px}
+.lecture{display:block;
+max-width:860px;
+margin:auto;
+border-left:1px solid #d3ddc8;
+padding-left:30px}
+.lecture .block{position:relative;
+margin:0 0 24px;
+padding:15px 19px;
+background:#fffef9;
+border:1px solid var(--line);
+border-radius:8px}
+.lecture .block-no{position:absolute;
+left:-48px;
+top:21px;
+background:var(--paper);
+padding:4px}
+.lecture .question-grid{grid-template-columns:1fr}
+.lecture .question-text{min-height:0}
+.lecture .diagram-wrap svg{max-height:240px}
+.library-nav{display:flex;
+gap:8px;
+overflow:auto;
+margin-bottom:20px;
+padding-bottom:7px}
+.library-nav button{white-space:nowrap;
+background:#edf0e6;
+border:1px solid var(--line)}
+.library-nav button.selected{background:var(--green);
+color:#fff}
+.library{display:grid;
+grid-template-columns:repeat(2,minmax(0,1fr));
+gap:18px}
+.library .block{grid-column:auto;
+border:1px solid var(--line);
+border-radius:8px;
+padding:12px 16px;
+background:#fffef9}
+.library .block[data-type=questions]{grid-column:1/-1}
+.library .formula-grid,.library .steps,.library .flow{display:flex;
+flex-direction:column;
+align-items:stretch}
+.library .flow b{display:none}
+.library .formula{margin-bottom:4px}
+.empty{padding:36px;
+text-align:center;
+color:var(--muted);
+grid-column:1/-1}
+.image-content{max-width:100%;
+max-height:280px;
+object-fit:contain;
+display:block;
+margin:auto;
+cursor:zoom-in}
+.image-missing{background:#eeeee5;
+padding:25px;
+text-align:center;
+font-size:13px;
+color:var(--muted)}
+.plain-text{white-space:pre-line;
+font-size:13px}
+.add-bottom{width:100%;
+border:1px dashed #b9c8ad;
+margin-top:24px;
+color:var(--green)}
+dialog{color:var(--ink);
+border:1px solid var(--line);
+border-radius:14px;
+padding:25px;
+width:min(620px,calc(100vw - 28px));
+max-height:90dvh;
+overflow:auto;
+box-shadow:0 20px 90px #21382724;
+background:var(--paper)}
+dialog::backdrop{background:#26342b55}
+.modal-head{display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:18px}
+.modal-head h2{font-size:21px}
+.add-grid{display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:10px}
+.add-grid button{background:#fffef9;
+border:1px solid var(--line);
+padding:19px 8px;
+min-height:92px;
+text-align:left}
+.add-grid strong{display:block;
+color:var(--green);
+font-size:24px;
+margin-bottom:4px}
+.form-row{margin:13px 0}
+.form-row label{display:block;
+font-size:13px;
+margin-bottom:5px}
+.form-actions{display:flex;
+justify-content:flex-end;
+gap:10px;
+margin-top:21px}
+.preview-image{max-width:100%;
+max-height:230px;
+display:block;
+margin:12px auto}
+.upload{display:block;
+border:1px dashed #a3b292;
+border-radius:8px;
+padding:19px;
+text-align:center;
+background:#edf1e7}
+.upload input{margin-top:10px}
+.drawer{margin:0 0 0 auto;
+height:100dvh;
+max-height:100dvh;
+border-radius:14px 0 0 14px;
+width:min(650px,100vw);
+animation:slide .2s ease-out}
+.board-sheet{margin-top:20px;
+background:#fffef9;
+border:1px solid var(--line);
+border-radius:8px;
+padding:23px}
+.board-sheet h3{font:24px 'SimSun',serif;
+margin-bottom:20px}
+.board-line{padding:13px 0;
+border-bottom:1px solid #dfe5d7;
+font-size:17px;
+white-space:pre-line}
+.board-line b{font-size:13px;
+display:block;
+color:#798c6c}
+.chalk{background:#25473f;
+color:#f0efdc;
+border:8px solid #9e8a64;
+box-shadow:inset 0 0 30px #102b2944}
+.chalk .board-line{border-color:#ffffff24;
+font-family:'KaiTi','SimSun',serif;
+font-size:21px}
+.chalk .board-line b{color:#d8d49c}
+.board-question{margin-top:15px;
+padding:12px;
+border:1px dashed #829580;
+font-size:13px;
+white-space:pre-line}
+.zoom{width:min(1100px,95vw)}
+.zoom img{width:100%;
+max-height:75vh;
+object-fit:contain}
+.search-result{width:100%;
+text-align:left;
+border-bottom:1px solid var(--line);
+border-radius:0;
+padding:14px 6px}
+.search-result small{display:block}
+.directory{padding:30px 0}
+.directory button{display:block;
+min-width:250px;
+text-align:left;
+border:1px solid var(--line);
+margin-top:12px;
+background:#fffef9}
+#toast{position:fixed;
+bottom:26px;
+left:50%;
+transform:translateX(-50%);
+padding:11px 20px;
+border-radius:8px;
+background:#284b3f;
+color:white;
+z-index:30;
+font-size:13px;
+max-width:90%;
+opacity:0;
+pointer-events:none}
+#toast.visible{opacity:1}
+.storage-warning{color:#9c5b26}
+.drop-target{outline:2px solid var(--green)}
+@keyframes slide{from{transform:translateX(100%)}
+to{transform:translateX(0)}
+}
+@media(min-width:1400px){.page{padding:32px 48px}
+.question p,.bullets li,.flow span{font-size:14px}
+}
+@media(max-width:1050px){.shell{grid-template-columns:210px minmax(0,1fr)}
+.page{padding:20px 23px}
+.topbar{padding:10px 18px}
+.template-hint{display:none}
+.top-actions button{padding:8px 10px}
+.save-status{display:none}
+.question-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.steps{flex-wrap:wrap}
+.step{flex:1 1 28%}
+}
+@media(max-width:900px){.shell{grid-template-columns:0 minmax(0,1fr)}
+aside.tree{position:fixed;
+z-index:12;
+width:236px;
+box-shadow:15px 0 40px #26382922}
+.closed aside.tree{width:0}
+.page{padding:20px}
+.topbar-left .muted{display:none}
+.heading h1{font-size:29px}
+.flow{flex-wrap:wrap;
+justify-content:flex-start}
+.blocks{gap:18px}
+.topbar{gap:5px}
+.top-actions{gap:1px}
+.tabs button{padding:8px 11px}
+.template-bar{align-items:flex-start}
+.heading{align-items:flex-start}
+.formula-grid{gap:7px}
+.formula{padding:10px}
+.math{font-size:23px}
+}
+@media(max-width:560px){.blocks,.library{display:block}
+.block{margin-bottom:17px}
+.question-grid{grid-template-columns:1fr}
+.topbar{flex-wrap:wrap}
+.top-actions{margin-left:auto}
+.topbar-left button{padding:8px}
+.page{padding:17px}
+.heading .muted{display:none}
+.formula-grid{grid-template-columns:1fr}
+.formula{display:flex;
+align-items:center;
+justify-content:space-between}
+.add-grid{grid-template-columns:repeat(2,1fr)}
+.lecture{padding-left:23px}
+.lecture .block-no{left:-39px}
+.tabs button{font-size:12px}
+.breadcrumb{line-height:1.4}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;
+scroll-behavior:auto!important}
+}
+
+:root{scrollbar-gutter:stable}
+
+.page{padding-top:18px}
+
+.breadcrumb{margin-bottom:8px}
+
+.template-bar{margin-top:17px;
+margin-bottom:16px}
+
+.tags{margin-top:8px}
+
+.diagram-wrap svg{max-height:150px}
+
+.question-filters button,.tabs button{min-height:44px}
+
+:root{--diagram-force:#326656;--diagram-gravity:#a86635;--diagram-component:#657b3d;--diagram-muted:#97a391;--diagram-plane:#eff2e7;--diagram-block:#c9d8b6}
+.shell{transition:grid-template-columns .28s ease}
+aside.tree{min-width:0;transition:opacity .22s ease,transform .28s ease,visibility .28s;transform:translateX(0);opacity:1}
+.closed aside.tree{padding:27px 16px;opacity:0;transform:translateX(-100%);pointer-events:none}
+.tree .brand{margin-bottom:24px}
+.tree-caption{letter-spacing:1px;margin-bottom:5px}
+.tree-hide{font-size:12px;letter-spacing:0;border:1px solid #d3dbcb;background:#f8faf4;padding:7px 10px}
+.tree-locate{width:100%;text-align:left;font-size:12px;color:var(--green);border:1px dashed #c3cfb9;background:#f3f6ee;margin:5px 0 15px}
+.tree-navigation{padding:0 0 5px}
+.tree-row{margin:4px 0;padding-left:calc(var(--depth)*7px);min-height:46px;border:1px solid transparent;transition:background .18s,border-color .18s,box-shadow .18s}
+.tree-row.active{background:#dbe7d5;border-color:#bdcdb2;box-shadow:inset 3px 0 0 var(--green)}
+.tree-row .branch{width:40px;min-height:44px;border-radius:7px;display:grid;place-items:center}
+.tree-row .branch:hover{background:#d7e1cd}
+.branch-chevron{display:block;font:24px/1 Georgia;transition:transform .24s ease}
+.branch[aria-expanded=true] .branch-chevron{transform:rotate(90deg)}
+.tree-leaf{display:grid;place-items:center;width:40px;flex-shrink:0;color:#839975;font-size:15px}
+.tree-row .node{min-width:0;white-space:normal;display:flex;gap:6px;align-items:center;justify-content:space-between;line-height:1.45;padding:9px 7px 9px 0;border-radius:5px;font-size:13px}
+.node-current{width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0}
+.tree-row button:active,.tree-locate:active,.tree-hide:active{transform:scale(.96);background:#cfddc5}
+.tree-children{display:grid;grid-template-rows:0fr;opacity:0;visibility:hidden;transition:grid-template-rows .26s ease,opacity .2s ease,visibility .26s}
+.tree-children.is-open{grid-template-rows:1fr;opacity:1;visibility:visible}
+.tree-children-inner{overflow:hidden;min-height:0}
+.tree-children .tree-children-inner{border-left:1px solid #d3ddcb;margin-left:9px}
+.block#block-essentials{grid-column:1/-1}
+.mastery-list{display:grid;grid-template-columns:1fr 1fr;gap:18px 25px}
+.mastery-item{display:flex;gap:11px;align-items:flex-start;padding:8px 0 12px;border-bottom:1px solid var(--line)}
+.mastery-number{font:italic 19px/30px Georgia;color:#81976e;width:24px;flex-shrink:0}
+.mastery-item h3{font-size:15px;margin:2px 0 8px}
+.mastery-item p{font-size:13px;line-height:1.9;color:#526052}
+.mastery-item .mastery-check{background:#edf1e5;border-radius:5px;margin-top:10px;padding:8px 10px;color:#48633d;font-size:12px}
+.lecture .mastery-list,.library .mastery-list{grid-template-columns:1fr}
+.board-drawer{width:min(890px,94vw);padding:23px 27px}
+.board-drawer.board-wide{width:min(1120px,100vw)}
+.board-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.copy-sheet{padding:25px;background:#fffef9}
+.copy-heading{border-bottom:2px solid #abbc98;padding-bottom:18px;margin-bottom:5px}
+.copy-heading>span{font-size:11px;letter-spacing:2px;color:#82906f}
+.copy-heading h3{margin:8px 0 10px;font-size:26px;line-height:1.5}
+.copy-heading p{font-size:13px;line-height:1.85;color:#65735b}
+.board-panel{padding:18px 0;border-bottom:1px solid #d7dfcc;break-inside:avoid}
+.board-panel h4{font-size:16px;margin:0 0 14px;display:flex;gap:12px;align-items:center}
+.board-panel h4>span{font:italic 18px Georgia;color:#889d72}
+.board-pair{display:grid;grid-template-columns:minmax(210px,.95fr) minmax(0,1.05fr);align-items:center;gap:22px}
+.board-pair figure{margin:0;min-width:0}
+.board-diagram{width:100%;display:block;font:19px Georgia,'Times New Roman',serif}
+.board-diagram .diagram-small{font:12px 'Microsoft YaHei',sans-serif;fill:var(--diagram-muted)}
+.board-pair figcaption{font-size:11px;line-height:1.7;color:#7b896c;padding:4px 7px}
+.board-equations{border-left:1px solid #dce3d1;padding-left:21px;min-width:0}
+.board-equation{margin:0 0 14px}
+.board-equation:last-child{margin-bottom:0}
+.board-equation>span{display:block;font-size:12px;color:#758568;margin-bottom:3px}
+.board-equation>div{font:21px/1.65 Georgia,'Times New Roman',serif;overflow-wrap:anywhere}
+.board-reminder{font-size:12px;background:#f1f3e9;border-left:2px solid #b3c499;padding:8px 11px;margin-top:13px;line-height:1.8}
+.copy-sheet .board-line{font-size:14px;line-height:1.8}
+.copy-sheet.chalk{--diagram-force:#e2ecd1;--diagram-gravity:#f1c794;--diagram-component:#d5dc92;--diagram-muted:#a4bba7;--diagram-plane:#2c5145;--diagram-block:#456c50;background:#25473f;color:#f3f2dd}
+.chalk .copy-heading p,.chalk .board-equation>span,.chalk .board-pair figcaption,.chalk .copy-heading>span{color:#bfd0b6}
+.chalk .board-panel,.chalk .board-equations{border-color:#ffffff25}
+.chalk .board-panel h4>span{color:#d5dc92}
+.chalk .board-reminder{background:#ffffff09;border-color:#b2bf87;color:#e0e8d2}
+@media(max-width:1050px){.tree-row{padding-left:calc(var(--depth)*3px)}.tree-children .tree-children-inner{margin-left:5px}.tree-row .branch,.tree-leaf{width:36px}}
+@media(max-width:900px){aside.tree{width:250px;transition:transform .28s ease,opacity .22s ease,visibility .28s}.closed aside.tree{width:250px}.shell,.shell.closed{grid-template-columns:0 minmax(0,1fr)}.board-drawer{width:100vw;border-radius:0}.tree-row{padding-left:calc(var(--depth)*7px)}}
+@media(max-width:600px){.mastery-list{grid-template-columns:1fr}.board-drawer{padding:16px}.copy-sheet{padding:16px}.board-pair{grid-template-columns:1fr;gap:12px}.board-diagram{max-height:215px}.board-equations{border-left:0;border-top:1px solid #dce3d1;padding:12px 0 0}.board-equation>div{font-size:21px}.copy-heading h3{font-size:23px}.board-panel h4{font-size:15px}}
+@media(prefers-reduced-motion:reduce){.shell,aside.tree,.tree-children,.branch-chevron,.tree-row{transition:none!important}}
+</style><style>/* 卡片总览扩展；原有知识树、板书和内容样式继续由 styles.css 管理。 */
+.overview-label{display:flex;justify-content:space-between;align-items:center;margin:22px 0 12px;color:#66785b;font-size:12px;letter-spacing:1px}
+.overview-label small{letter-spacing:0}
+.core-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.module-card{min-width:0;position:relative;border:1px solid #d4ddcc;border-radius:10px;background:#f0f3e9;touch-action:pan-y;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.core-card:nth-child(2){background:#edf1e7}.core-card:nth-child(3){background:#e6eee6}.core-card:nth-child(4){background:#f2f1e7}
+.card-top{display:flex;align-items:center;gap:8px;padding:9px 13px 0;min-height:42px}
+.card-symbol{font:23px/1 Georgia;color:#658458;width:29px;text-align:center}
+.card-count{font-size:11px;color:#7b886e;flex:1}
+.card-menu{font-size:16px;min-width:44px;min-height:44px;padding:6px;border-radius:6px;color:#74816b}
+.card-main{display:block;width:100%;padding:0 20px 14px;text-align:left;border-radius:0 0 9px 9px;min-height:126px}
+.card-main:hover,.question-main:hover{background:#ffffff20}
+.card-main h2{font:600 22px/1.5 'Songti SC','SimSun',serif;letter-spacing:1px;margin-bottom:6px}
+.card-summary{white-space:pre-line;font-size:12px;color:#69745e;line-height:1.9;min-height:45px}
+.card-open-label{display:flex;justify-content:space-between;font-size:11px;color:#3f694b;margin-top:8px}
+.core-card .card-open-label{border-top:1px solid #d9e1d1;padding-top:7px}
+.other-heading{display:flex;align-items:center;justify-content:space-between;margin:24px 0 11px;color:#7d8474}
+.other-heading h2{font-size:14px;font-weight:500}.other-heading>span{font-size:11px}.other-heading small{margin-left:7px}
+.support-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}
+.support-card{background:#fafaf5;border-color:#e1e3d9}.support-card .card-main{padding:0 13px 12px;min-height:98px}.support-card .card-main h2{font:500 14px/1.5 'Microsoft YaHei',sans-serif;letter-spacing:0}.support-card .card-summary{font-size:11px;min-height:35px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.support-card .card-symbol{font-size:18px}.support-card .card-top{padding:3px 8px 0}.support-card .card-menu{min-height:40px}.support-card .card-count{font-size:10px}
+.support-add{border:1px dashed #ccd6c1;border-radius:9px;min-height:110px;font-size:13px;color:#779068}
+.card-thumbnail{width:100%;height:120px;object-fit:contain;background:#eeefe7;border-radius:5px;margin-top:9px;pointer-events:none}
+.card-main .image-missing{font-size:11px;line-height:1.6;padding:10px;min-height:76px}
+.organizer-tools{display:none;border-top:1px dashed #b7c7a7;padding:5px 8px;gap:4px;align-items:center}.organizer-tools button{font-size:12px;min-height:42px;padding:7px 9px;border:1px solid #d4dfc9;background:#fbfdf7}.card-handle{flex:1;text-align:left;touch-action:pan-y}
+.arranging .organizer-tools{display:flex}.arranging [data-card]{outline:1px dashed #b4c4a5;outline-offset:2px}.arranging .card-main,.arranging .question-main{cursor:grab}.arranging .card-open-label{opacity:.5}
+.arrange-banner{display:none;align-items:center;justify-content:space-between;gap:10px;margin:15px 0;background:#e5ecd9;padding:8px 12px;border-radius:7px;font-size:12px}.arranging .arrange-banner{display:flex}.arrange-banner button{font-size:12px}
+.focus-view{margin-top:22px}.focus-toolbar{display:flex;align-items:center;gap:12px;position:sticky;top:69px;background:var(--paper);padding:9px 0;z-index:3}.focus-toolbar .muted{flex:1}.focus-heading{margin:15px 0 24px;padding-bottom:17px;border-bottom:1px solid var(--line)}.focus-heading h2{font:600 27px 'SimSun',serif}.focus-heading p{font-size:12px;color:var(--muted);margin-top:9px}.focus-content{max-width:980px;margin:auto}.focus-content .mastery-list{gap:20px 28px}.focus-content .formula-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.focus-content .question-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.teaching-route{list-style:none;padding:0;margin:0;counter-reset:route;display:grid;grid-template-columns:1fr 1fr;gap:16px}.teaching-route li{counter-increment:route;border:1px solid #dae2d1;border-radius:8px;padding:16px 19px;background:#f3f5ec}.teaching-route li:before{content:counter(route,decimal-leading-zero);display:block;font:italic 20px Georgia;color:#91a37c;margin-bottom:7px}.teaching-route b{font-size:15px}.teaching-route p{font-size:13px;color:#6d7a61;margin-top:7px}
+.compact-question{position:relative;touch-action:pan-y;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}.compact-question .question-top{padding:2px 8px 2px 13px;align-items:center}.question-main{width:100%;text-align:left;padding:0;display:block}.question-thumb{width:100%;height:125px;object-fit:contain;pointer-events:none;background:#f6f6ec}.question-text-thumb{height:125px;overflow:hidden;font:13px/1.85 'SimSun',serif;background:#f3f2e8;padding:17px;color:#53604c}.compact-question .question-content{padding:13px}.compact-question .why{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:43px}.compact-question .image-missing{min-height:125px;font-size:11px;padding:16px}.compact-question .question-content h3{font-size:14px}.compact-question .tags{min-height:27px}
+.question-dialog{width:min(850px,94vw)}.question-detail h3{font-size:14px;margin:22px 0 8px;color:#647956}.question-detail p{white-space:pre-line;font-size:14px;line-height:1.9}.detail-image{max-width:100%;max-height:480px;object-fit:contain;display:block;margin:auto}.question-detail .form-actions{flex-wrap:wrap}
+.card-menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.card-menu-grid button{min-height:56px;text-align:left}.danger-text{color:#a36042}.future-action{width:100%;text-align:left;border-top:1px solid var(--line);border-radius:0;margin-top:14px}.move-list{display:grid;gap:8px;margin-top:15px}.move-list button{text-align:left;min-height:48px}
+#card-delete-zone{position:fixed;bottom:17px;left:50%;transform:translateX(-50%);width:min(610px,calc(100vw - 32px));padding:23px 16px;border:2px dashed #c98d6e;border-radius:12px;background:#fff5ea;color:#a15b35;text-align:center;z-index:50;box-shadow:0 5px 35px #38271518;font-size:15px;pointer-events:none}
+#card-delete-zone.delete-ready{background:#a75c43;color:#fff;border-color:#6f3221;transform:translateX(-50%) scale(1.03)}
+.being-dragged{opacity:.3!important}.drag-ghost{position:fixed;pointer-events:none;z-index:70;max-height:195px;overflow:hidden;box-shadow:0 12px 38px #263f3a35;transform:rotate(2deg);border:1px solid #7e996a;border-radius:9px;background:#edf2e5;opacity:.94}.drag-ghost .card-main{padding:5px 13px}.drag-ghost .card-main h2{font-size:18px}.drag-ghost .organizer-tools{display:none}.card-dragging,.card-dragging *{cursor:grabbing!important;user-select:none!important}
+.insert-before{box-shadow:-5px 0 0 #507740!important}.insert-after{box-shadow:5px 0 0 #507740!important}.insert-before:before,.insert-after:before{position:absolute;top:-16px;font-size:10px;background:#507740;color:white;padding:2px 7px;border-radius:4px;z-index:2;content:'放在此卡前'}.insert-after:before{right:0;content:'放在此卡后'}
+#delete-undo{position:fixed;bottom:17px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:12px;background:#edf3e5;border:1px solid #acbf99;border-radius:10px;padding:6px 10px 6px 18px;z-index:20;font-size:13px;box-shadow:0 4px 18px #25382916}.card-dragging #delete-undo{display:none}
+@media(max-width:1050px){.focus-content .question-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.support-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.card-main{padding-left:16px;padding-right:16px}.card-main h2{font-size:21px}}
+@media(max-width:600px){.core-grid{gap:9px}.card-main{padding:0 12px 12px;min-height:150px}.card-main h2{font-size:19px}.card-count{font-size:10px}.card-top{padding-left:8px;padding-right:4px}.card-symbol{font-size:20px;width:23px}.card-summary{font-size:11px;min-height:63px}.overview-label small{font-size:10px}.other-heading>span{display:none}.support-grid{gap:9px}.focus-content .question-grid,.teaching-route,.focus-content .formula-grid{grid-template-columns:1fr}.focus-toolbar{top:70px;gap:7px}.focus-toolbar button{font-size:12px}.arrange-banner{align-items:flex-start}.organizer-tools{flex-wrap:wrap}.organizer-tools .card-handle{flex-basis:100%}.card-menu-grid button{font-size:13px}}
+@media(prefers-reduced-motion:reduce){.drag-ghost{transform:none}#card-delete-zone.delete-ready{transform:translateX(-50%)}}
+</style><style>/* 蓝色手牌工作台：仅叠放主卡，沿用原有内容和整理功能。 */
+.publication-note{margin:0;padding:8px 20px;background:#254b89;color:white;font-size:12px;text-align:center}
+.published-reader [data-action="publish"],.published-reader [data-action="add"],.published-reader [data-action="edit"],.published-reader [data-action="new"],.published-reader [data-action="card-menu"],.published-reader [data-action="card-edit"],.published-reader [data-action="board-add"],.published-reader [data-action="more"],.published-reader .save-status,.published-reader .organizer-tools{display:none!important}
+:root{--paper:#f4f7fc;--ink:#24354c;--muted:#738198;--green:#2856ac;--line:#d9e2ef;--pale:#eaf0fa;--gold:#5266a0}
+body{background:var(--paper)}
+button:hover{background:#e5ecf8}button:focus-visible,a:focus-visible{outline-color:#638ee1}
+.primary{background:#2856ac}.primary:hover{background:#20478e}
+aside.tree{background:#23344f;border-color:#23344f;color:#dce6f6}
+.tree .brand{color:#fff}.brand-symbol{background:#426cb1}
+.tree-caption,.tree-footer{color:#a6b7d0}.tree-footer{border-color:#43536b}
+.tree button:hover,.tree-row:hover{background:#314762;color:#fff}
+.tree-row.active{background:#3c6099;color:#fff;box-shadow:inset 3px 0 #94bbff}
+.tree .tree-locate{background:#2c405e;color:#d6e5ff;border-color:#4b6080}
+.tree .branch-chevron,.tree .tree-leaf{color:#a8bfdf}.tree .node-current{background:#bed6ff}
+.tree-children-inner{border-color:#495d79}.topbar{background:#f9fbff}
+.heading{border-left:5px solid #2f58aa;padding:12px 18px;background:#eaf0fa;border-radius:0 10px 10px 0}
+.heading h1{color:#193b79}.eyebrow{color:#45649d}.tag{background:#e1eaf9;color:#385e99}
+.overview-label{margin:20px 0 4px;color:#284f91;font-weight:600}.overview-label small{font-weight:400;color:#6b7e99}
+.deck-index{display:flex;align-items:center;gap:6px;margin:4px 0 0;flex-wrap:wrap}
+.deck-index button{font-size:12px;color:#52698e;min-height:44px;padding:7px 12px;border-bottom:2px solid transparent;border-radius:5px 5px 0 0}
+.deck-index button[aria-pressed=true]{color:#204eaa;border-bottom-color:#2856ac;background:#e3ecfb;font-weight:600}
+.core-grid{display:flex;gap:0;overflow-x:auto;overflow-y:hidden;padding:28px 26px 30px 10px;scroll-snap-type:x proximity;scroll-padding-inline:28px;overscroll-behavior-x:contain;touch-action:pan-x pan-y;scrollbar-color:#9aafd1 #e4ebf6;scrollbar-width:thin;isolation:isolate}
+.core-card{flex:0 0 39%;min-width:260px;max-width:410px;min-height:238px;scroll-snap-align:center;touch-action:pan-x pan-y;border:1px solid #b7c9e5;border-radius:12px;background:#fff!important;box-shadow:0 7px 15px #1d3b6c13;transform:translateY(5px) rotate(-1.5deg);transition:transform .24s ease,box-shadow .24s ease,border-color .24s ease;z-index:1}
+.core-card+.core-card{margin-left:-17px;transform:translateY(12px) rotate(1deg)}
+.core-card:nth-child(3){transform:translateY(3px) rotate(-1deg)}.core-card:nth-child(4){transform:translateY(10px) rotate(1.5deg)}
+.core-card .card-top{background:#e3ebf8;border-bottom:1px solid #cfddf0;border-radius:11px 11px 0 0;padding:4px 12px;min-height:50px}
+.core-card .card-symbol{color:#2856ac}.core-card .card-count{color:#466694}.core-card .card-menu{color:#31588b}
+.core-card .card-main{padding:13px 21px 17px;min-height:188px}.core-card .card-main h2{color:#20467f;font-size:25px}
+.core-card .card-summary{color:#63738b;font-size:12px;line-height:1.9;min-height:68px}.core-card .card-open-label{border-color:#dce5f3;color:#476eaa;font-size:11px}
+.core-card.is-selected{transform:translateY(-9px) scale(1.025);border-color:#3a66bc;box-shadow:0 16px 28px #234b902b;z-index:3}
+.core-card.is-selected .card-top{background:#2856ac;border-color:#2856ac}.core-card.is-selected .card-top *{color:#fff}.core-card.is-selected .card-main h2{color:#194da8}
+.core-card:focus-within{z-index:4}.core-card:active{filter:brightness(.98)}
+.other-heading{border-top:1px solid #dbe3ef;padding-top:18px;margin-top:14px;color:#77869b}.other-heading h2{color:#5f718a}
+.support-card{background:#fafcff;border-color:#dce4ef;box-shadow:none}.support-card .card-main h2{color:#4c607f}.support-card .card-symbol,.support-card .card-count,.support-card .card-summary,.support-card .card-open-label,.support-card .card-menu{color:#7788a0}
+.support-add{color:#6d82a2;border-color:#bdcce1}.card-thumbnail,.question-thumb,.question-text-thumb{background:#edf2fa;color:#4b6283}
+.arranging .core-card{transform:none;outline-color:#88a3cd}.arranging .core-grid{gap:14px;scroll-snap-type:none}.arranging .core-card+.core-card{margin-left:0}
+.arrange-banner{background:#e0eafb;color:#365788}.organizer-tools{border-color:#a9bfdc}.organizer-tools button{background:#f7faff;border-color:#c5d5ec;color:#42679e}
+.teaching-route li{background:#f9fbff;border-color:#d7e2f2}.teaching-route li:before{color:#678bc0}.teaching-route p,.question-detail h3{color:#536f97}
+.focus-heading{border-bottom:2px solid #b4c9e8}.focus-heading h2{color:#244f95}.focus-view{animation:focus-in .2s ease-out}
+.mastery-item{border-color:#d7e2ef}.mastery-number{background:#e2ecfb;color:#315a9e}.mastery-check{color:#42699b!important;background:#edf3fc!important}
+.mastery-item small{display:block;margin-top:14px;color:#4369a1;font-size:11px;letter-spacing:1px}.mastery-item small:first-child{margin-top:0}
+.drag-ghost{background:#f5f8fe;border-color:#7196cc}.insert-before{box-shadow:-5px 0 0 #356aca!important}.insert-after{box-shadow:5px 0 0 #356aca!important}.insert-before:before,.insert-after:before{background:#356aca}
+#delete-undo{background:#edf3ff;border-color:#9eb8df}.add-grid button{min-height:68px}
+@keyframes focus-in{from{opacity:.4;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:1050px){.core-card{flex-basis:44%;min-width:250px}.core-card .card-main{padding:12px 17px}.heading{padding:10px 15px}}
+@media(max-width:600px){.core-card{flex-basis:83%;min-width:235px}.core-grid{padding-right:25px}.deck-index{gap:0}.deck-index button{padding:6px 9px;font-size:11px}.heading{padding:10px}.overview-label small{font-size:10px}.core-card .card-main h2{font-size:24px}}
+@media(prefers-reduced-motion:reduce){.core-card,.focus-view{transition:none;animation:none}.core-grid{scroll-behavior:auto}}
+</style><script>window.PHYSICS_PUBLICATION={"version":"2026-09-27T15:23:59.335Z","state":{"nodes":[{"id":"root","title":"高中物理","parent":null},{"id":"mechanics","title":"力学","parent":"root"},{"id":"forces","title":"相互作用","parent":"mechanics"},{"id":"newton","title":"牛顿运动定律","parent":"mechanics"},{"id":"second","title":"牛顿第二定律","parent":"newton"},{"id":"models","title":"动力学模型","parent":"newton"},{"id":"incline","title":"斜面问题","parent":"models"}],"blocks":[{"id":"essentials","type":"text","title":"必须掌握","text":"先选研究对象，再找真实受力｜把物块单独拿出来分析：重力 mg 竖直向下，支持力 N 垂直斜面向外；斜面粗糙且存在相对滑动或滑动趋势时，还要分析摩擦力。速度和加速度不是力，不要因为物块正在运动就多画一个力。｜自查：每一根力的箭头，能否说出是谁施加的？\n坐标沿斜面建立，分解就有了目的｜通常把 x 轴沿斜面、y 轴垂直斜面。重力的两个分量分别是 mg sinθ 和 mg cosθ；重力与垂直斜面向内方向的夹角等于斜面倾角 θ。分力是重力的等效替代，不是新增的两个力。｜自查：令 θ = 0，沿斜面分量应为 0，垂直分量应为 mg。\n摩擦力先判方向，再求大小｜沿固定斜面下滑时，滑动摩擦力向上；上滑时，滑动摩擦力向下，大小均为 f = μN。静止时先判断滑动趋势，静摩擦力由平衡条件求出，不能直接套 f = μN。｜自查：物块到了最高点，不能不加判断地沿用上滑时的摩擦方向。\n两条运动方程，分别解决两个方向｜以沿斜面向下为正，下滑时有 mg sinθ − f = ma；固定斜面上不脱离且无其他外力时，垂直方向 N − mg cosθ = 0。先用垂直方向求 N，再代入 f = μN，最后求 a。｜自查：若增加一个斜向拉力，支持力的方程也要跟着改。\n看清加速度，再判断运动状态｜下滑时 a = g(sinθ − μcosθ)，这里 a 带正负号。a > 0 表示向下加速；a \u003c 0 表示正在下滑的物块减速，不能直接说它已经向上运动。速度减到零后，需要重新分析能否保持静止。｜自查：判断加速或减速，要同时看速度方向和加速度方向。","collapsed":false,"knowledgePointId":"incline","sortOrder":1},{"id":"thread","type":"flow","title":"核心主线","text":"识别模型 → 受力分析 → 建立坐标 → 分解重力 → 列牛顿第二定律 → 判断运动状态","collapsed":false,"knowledgePointId":"incline","sortOrder":2},{"id":"diagram","type":"diagram","title":"模型图 · 受力分析","text":"物块沿固定粗糙斜面下滑，滑动摩擦力沿斜面向上。只画真实受力，分力不作为额外的力。","collapsed":false,"knowledgePointId":"incline","sortOrder":4},{"id":"formulas","type":"formula","title":"核心公式","text":"沿斜面分量 | mg sinθ\n垂直斜面分量 | mg cosθ\n牛顿第二定律 | ΣF = ma","note":"固定斜面、无其他外力且不脱离斜面时：N = mg cosθ。滑动摩擦力 f = μN。","collapsed":false,"knowledgePointId":"incline","sortOrder":5},{"id":"process","type":"steps","title":"标准解题流程","text":"选对象｜隔离物块，明确斜面固定\n画受力｜重力、支持力、摩擦力\n建坐标｜沿斜面向下为 x 正方向\n列方程｜mg sinθ − f = ma；N − mg cosθ = 0\n验结果｜结合初速度判断加速、减速或转向","collapsed":false,"knowledgePointId":"incline","sortOrder":6},{"id":"questions","type":"questions","title":"典型例题","items":[{"id":"q1","title":"光滑斜面上的下滑","category":"基础","difficulty":"★","tags":"受力分析，牛顿第二定律","text":"一物块从倾角为 30° 的固定光滑斜面上由静止释放。取 g = 10 m/s²，求加速度与 2 s 内的位移。","note":"先用最简单模型，建立沿斜面列式的习惯。","analysis":"沿斜面：mg sin30° = ma，得 a = 5 m/s²。\n由静止出发，s = ½at² = 10 m。","knowledgePointId":"incline","sortOrder":0},{"id":"q2","title":"斜面 + 滑动摩擦","category":"典型","difficulty":"★★","tags":"受力分析，摩擦力，牛顿第二定律","text":"物块沿倾角 37° 的固定粗糙斜面下滑，动摩擦因数 μ = 0.25。取 g = 10 m/s²，sin37° = 0.6，cos37° = 0.8。求物块加速度。","note":"用于训练标准斜面受力分析，区分重力分量与真实受力。","analysis":"垂直斜面：N = mg cos37°。\n滑动摩擦力沿斜面向上，f = μN。\n沿斜面：mg sin37° − μmg cos37° = ma。\na = 10 × (0.6 − 0.25 × 0.8) = 4 m/s²，沿斜面向下。","knowledgePointId":"incline","sortOrder":1},{"id":"q3","title":"沿斜面上滑，会发生什么？","category":"变式","difficulty":"★★","tags":"摩擦力方向，运动状态","text":"物块以 6 m/s 的初速度沿 30° 粗糙固定斜面上滑，μ = √3/6，g = 10 m/s²。求上滑至最高点的时间。","note":"对比上滑与下滑，强调摩擦力方向随相对运动变化。","analysis":"上滑过程中，重力沿斜面分量和摩擦力都向下。\n取向上为正，a = −g(sin30° + μcos30°) = −7.5 m/s²。\n到最高点 v = 0，t = 6/7.5 = 0.8 s。停止后的运动要重新判断。","knowledgePointId":"incline","sortOrder":2}],"knowledgePointId":"incline","sortOrder":3},{"id":"mistakes","type":"mistake","title":"易错点","text":"sin / cos 写反｜沿斜面是 mg sinθ，垂直斜面是 mg cosθ。\n默认 N = mg｜支持力需由垂直斜面的运动方程确定。\n摩擦力总与速度反向？｜滑动摩擦力与接触面的相对运动方向相反；静摩擦力看趋势。\n多画一个“运动方向的力”｜运动不需要额外的力来维持。","collapsed":false,"knowledgePointId":"incline","sortOrder":7},{"id":"variants","type":"text","title":"常见变式","text":"沿斜面上滑：摩擦力与重力沿斜面分量同向\n外力拉动：先分解外力，再求支持力和摩擦力\n临界静止：静摩擦力由平衡条件求出，检验是否超过最大静摩擦力","collapsed":true,"knowledgePointId":"incline","sortOrder":8},{"id":"board","type":"board","title":"板书","text":"停下后重新判断｜速度减为零后，重新判断静摩擦力能否维持平衡，不能直接延续滑动阶段的结论。","collapsed":false,"panels":[{"scene":"forces","title":"隔离物块，画出三个真实力","caption":"物块沿斜面下滑，摩擦力沿斜面向上。","formulas":[["重力 · 竖直向下","G = mg"],["支持力 · 垂直斜面向外","N"],["滑动摩擦力 · 沿斜面向上","f = μN"]],"note":"μ 是动摩擦因数。不要多画“运动方向的力”。"},{"scene":"components","title":"沿斜面建系，将重力分解","caption":"虚线是辅助线，两个分量合起来等效于重力。","formulas":[["沿斜面向下的分量","Gₓ = mg sinθ"],["垂直斜面向内的分量","G⊥ = mg cosθ"]],"note":"θ 是斜面倾角，也是重力与垂直斜面向内方向的夹角。列式时不能将重力和这两个分量重复计入。"},{"scene":"equations","title":"分方向列方程，联立求加速度","caption":"约定 x 正方向沿斜面向下，y 正方向垂直斜面向外。","formulas":[["y 方向 · 无垂直斜面的加速度","N − mg cosθ = 0"],["先求支持力，再求摩擦力","N = mg cosθ；f = μmg cosθ"],["x 方向 · 牛顿第二定律","mg sinθ − f = ma"],["代入并约去质量 m","a = g(sinθ − μcosθ)"]],"note":"a > 0：下滑加速；a = 0：匀速下滑；a \u003c 0：下滑减速。这里只讨论已经下滑的阶段。"}],"knowledgePointId":"incline","sortOrder":0},{"id":"notes","type":"text","title":"我的补充","text":"讲题前先问：物块相对斜面向哪边运动？\n让学生先画受力图，再写公式。","collapsed":false,"knowledgePointId":"incline","sortOrder":9},{"id":"idmujxe712ryzj5","type":"board","title":"板书","text":"dasdsdsd","knowledgePointId":"incline","sortOrder":10,"tags":""},{"id":"idmujxeonnuqzro","type":"board","title":"板书","text":"","knowledgePointId":"incline","sortOrder":11},{"id":"idmujxftj944f8o","type":"board","title":"板书","text":"","knowledgePointId":"incline","sortOrder":12}],"boardQuestions":[],"orders":{"quick":["thread","essentials","diagram","formulas","process","questions","mistakes","variants","board","notes"]},"template":"quick","cardOrder":["board","essentials","thread","questions","diagram","formulas","process","mistakes","variants","notes","idmujxe712ryzj5","idmujxeonnuqzro","idmujxftj944f8o"]},"images":{}};</script></head>
+<body><div id="app"><section style="max-width:620px;margin:60px auto;padding:24px;font:16px/1.8 sans-serif"><h1>正在打开斜面工作台</h1><p>如果一直停留在此页，可能是网页文件不完整或浏览器未能运行页面。</p><p>发布到 GitHub 时，请上传“导出发布”生成的压缩包内的 index.html，不要单独上传电脑项目目录里的同名文件。</p><p>电脑备课请从桌面快捷方式进入，并按 Ctrl + F5 重新载入。</p></section></div><dialog id="modal"></dialog><div id="toast" role="status"></div><script>// 每个知识点由独立的、带类型的内容块组成。三种视图共享这些记录。
+window.PHYSICS_SEED = {
+ nodes:[{id:'root',title:'高中物理',parent:null},{id:'mechanics',title:'力学',parent:'root'},{id:'forces',title:'相互作用',parent:'mechanics'},{id:'newton',title:'牛顿运动定律',parent:'mechanics'},{id:'second',title:'牛顿第二定律',parent:'newton'},{id:'models',title:'动力学模型',parent:'newton'},{id:'incline',title:'斜面问题',parent:'models'}],
+ blocks:[
+ {id:'thread',type:'flow',title:'核心主线',text:'识别模型 → 受力分析 → 建立坐标 → 分解重力 → 列牛顿第二定律 → 判断运动状态'},
+ {id:'essentials',type:'text',title:'必须掌握',text:'先选研究对象，再找真实受力｜把物块单独拿出来分析：重力 mg 竖直向下，支持力 N 垂直斜面向外；斜面粗糙且存在相对滑动或滑动趋势时，还要分析摩擦力。速度和加速度不是力，不要因为物块正在运动就多画一个力。｜自查：每一根力的箭头，能否说出是谁施加的？\n坐标沿斜面建立，分解就有了目的｜通常把 x 轴沿斜面、y 轴垂直斜面。重力的两个分量分别是 mg sinθ 和 mg cosθ；重力与垂直斜面向内方向的夹角等于斜面倾角 θ。分力是重力的等效替代，不是新增的两个力。｜自查：令 θ = 0，沿斜面分量应为 0，垂直分量应为 mg。\n摩擦力先判方向，再求大小｜沿固定斜面下滑时，滑动摩擦力向上；上滑时，滑动摩擦力向下，大小均为 f = μN。静止时先判断滑动趋势，静摩擦力由平衡条件求出，不能直接套 f = μN。｜自查：物块到了最高点，不能不加判断地沿用上滑时的摩擦方向。\n两条运动方程，分别解决两个方向｜以沿斜面向下为正，下滑时有 mg sinθ − f = ma；固定斜面上不脱离且无其他外力时，垂直方向 N − mg cosθ = 0。先用垂直方向求 N，再代入 f = μN，最后求 a。｜自查：若增加一个斜向拉力，支持力的方程也要跟着改。\n看清加速度，再判断运动状态｜下滑时 a = g(sinθ − μcosθ)，这里 a 带正负号。a > 0 表示向下加速；a < 0 表示正在下滑的物块减速，不能直接说它已经向上运动。速度减到零后，需要重新分析能否保持静止。｜自查：判断加速或减速，要同时看速度方向和加速度方向。'},
+ {id:'diagram',type:'diagram',title:'模型图 · 受力分析',text:'物块沿固定粗糙斜面下滑，滑动摩擦力沿斜面向上。只画真实受力，分力不作为额外的力。'},
+ {id:'formulas',type:'formula',title:'核心公式',text:'沿斜面分量 | mg sinθ\n垂直斜面分量 | mg cosθ\n牛顿第二定律 | ΣF = ma',note:'固定斜面、无其他外力且不脱离斜面时：N = mg cosθ。滑动摩擦力 f = μN。'},
+ {id:'process',type:'steps',title:'标准解题流程',text:'选对象｜隔离物块，明确斜面固定\n画受力｜重力、支持力、摩擦力\n建坐标｜沿斜面向下为 x 正方向\n列方程｜mg sinθ − f = ma；N − mg cosθ = 0\n验结果｜结合初速度判断加速、减速或转向'},
+ {id:'questions',type:'questions',title:'典型例题',items:[
+ {id:'q1',title:'光滑斜面上的下滑',category:'基础',difficulty:'★',tags:'受力分析，牛顿第二定律',text:'一物块从倾角为 30° 的固定光滑斜面上由静止释放。取 g = 10 m/s²，求加速度与 2 s 内的位移。',note:'先用最简单模型，建立沿斜面列式的习惯。',analysis:'沿斜面：mg sin30° = ma，得 a = 5 m/s²。\n由静止出发，s = ½at² = 10 m。'},
+ {id:'q2',title:'斜面 + 滑动摩擦',category:'典型',difficulty:'★★',tags:'受力分析，摩擦力，牛顿第二定律',text:'物块沿倾角 37° 的固定粗糙斜面下滑，动摩擦因数 μ = 0.25。取 g = 10 m/s²，sin37° = 0.6，cos37° = 0.8。求物块加速度。',note:'用于训练标准斜面受力分析，区分重力分量与真实受力。',analysis:'垂直斜面：N = mg cos37°。\n滑动摩擦力沿斜面向上，f = μN。\n沿斜面：mg sin37° − μmg cos37° = ma。\na = 10 × (0.6 − 0.25 × 0.8) = 4 m/s²，沿斜面向下。'},
+ {id:'q3',title:'沿斜面上滑，会发生什么？',category:'变式',difficulty:'★★',tags:'摩擦力方向，运动状态',text:'物块以 6 m/s 的初速度沿 30° 粗糙固定斜面上滑，μ = √3/6，g = 10 m/s²。求上滑至最高点的时间。',note:'对比上滑与下滑，强调摩擦力方向随相对运动变化。',analysis:'上滑过程中，重力沿斜面分量和摩擦力都向下。\n取向上为正，a = −g(sin30° + μcos30°) = −7.5 m/s²。\n到最高点 v = 0，t = 6/7.5 = 0.8 s。停止后的运动要重新判断。'}]},
+ {id:'mistakes',type:'mistake',title:'易错点',text:'sin / cos 写反｜沿斜面是 mg sinθ，垂直斜面是 mg cosθ。\n默认 N = mg｜支持力需由垂直斜面的运动方程确定。\n摩擦力总与速度反向？｜滑动摩擦力与接触面的相对运动方向相反；静摩擦力看趋势。\n多画一个“运动方向的力”｜运动不需要额外的力来维持。'},
+ {id:'variants',type:'text',title:'常见变式',text:'沿斜面上滑：摩擦力与重力沿斜面分量同向\n外力拉动：先分解外力，再求支持力和摩擦力\n临界静止：静摩擦力由平衡条件求出，检验是否超过最大静摩擦力',collapsed:true},
+ {id:'board',type:'board',title:'板书',text:'停下后重新判断｜速度减为零后，重新判断静摩擦力能否维持平衡，不能直接延续滑动阶段的结论。',panels:[
+ {scene:'forces',title:'隔离物块，画出三个真实力',caption:'物块沿斜面下滑，摩擦力沿斜面向上。',formulas:[['重力 · 竖直向下','G = mg'],['支持力 · 垂直斜面向外','N'],['滑动摩擦力 · 沿斜面向上','f = μN']],note:'μ 是动摩擦因数。不要多画“运动方向的力”。'},
+ {scene:'components',title:'沿斜面建系，将重力分解',caption:'虚线是辅助线，两个分量合起来等效于重力。',formulas:[['沿斜面向下的分量','Gₓ = mg sinθ'],['垂直斜面向内的分量','G⊥ = mg cosθ']],note:'θ 是斜面倾角，也是重力与垂直斜面向内方向的夹角。列式时不能将重力和这两个分量重复计入。'},
+ {scene:'equations',title:'分方向列方程，联立求加速度',caption:'约定 x 正方向沿斜面向下，y 正方向垂直斜面向外。',formulas:[['y 方向 · 无垂直斜面的加速度','N − mg cosθ = 0'],['先求支持力，再求摩擦力','N = mg cosθ；f = μmg cosθ'],['x 方向 · 牛顿第二定律','mg sinθ − f = ma'],['代入并约去质量 m','a = g(sinθ − μcosθ)']],note:'a > 0：下滑加速；a = 0：匀速下滑；a < 0：下滑减速。这里只讨论已经下滑的阶段。'}]},
+ {id:'notes',type:'text',title:'我的补充',text:'讲题前先问：物块相对斜面向哪边运动？\n让学生先画受力图，再写公式。',collapsed:true}
+ ],boardQuestions:[],orders:{},template:'quick'
+};
+</script><script>// 图、公式使用同一坐标约定：斜面向右上方倾斜，物块正在向左下方滑动。
+window.drawBoardDiagram = function(scene) {
+ const id='board-'+scene;
+ const arrow=(d,color='force')=>`<path d="${d}" fill="none" stroke="var(--diagram-${color})" stroke-width="2.4" marker-end="url(#${id}-${color})"/>`;
+ const label=(x,y,text,color='force')=>`<text x="${x}" y="${y}" fill="var(--diagram-${color})">${text}</text>`;
+ const markers=['force','gravity','component'].map(c=>`<marker id="${id}-${c}" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0 0L6 3L0 6" fill="none" stroke="var(--diagram-${c})" stroke-width="1.2"/></marker>`).join('');
+ const plane=scene==='components'?'':`<path d="M38 181H326V37Z" fill="var(--diagram-plane)" stroke="var(--diagram-muted)" stroke-width="1.2"/><path d="M75 181A37 37 0 0 0 71 165" fill="none" stroke="var(--diagram-muted)"/>${label(84,173,'θ','component')}<g transform="translate(180 110) rotate(-26.565)"><rect x="-23" y="-35" width="46" height="34" rx="3" fill="var(--diagram-block)" stroke="var(--diagram-force)"/></g>`;
+ let vectors='';
+ if(scene==='components'){
+  vectors=arrow('M180 90V195','gravity')+arrow('M180 90L138 111','component')+arrow('M180 90L222 174','component')+
+  '<path d="M138 111L180 195L222 174" fill="none" stroke="var(--diagram-muted)" stroke-width="1.3" stroke-dasharray="4 4"/>'+
+  '<path d="M180 130A40 40 0 0 0 198 126" fill="none" stroke="var(--diagram-component)"/>'+
+  label(191,151,'θ','component')+label(149,219,'mg','gravity')+label(30,106,'mg sinθ','component')+label(232,165,'mg cosθ','component')+
+  '<text x="20" y="34" class="diagram-small">重力的等效分解</text>';
+ }else if(scene==='equations'){
+  vectors=arrow('M180 90L74 143','component')+arrow('M180 90L146 22','component')+label(42,156,'+x','component')+label(117,23,'+y','component')+
+  arrow('M180 90V195','gravity')+label(189,208,'mg','gravity')+arrow('M180 90L250 55')+label(263,57,'f')+
+  '<text x="204" y="128" class="diagram-small">y 方向：aᵧ = 0</text>';
+ }else{
+  vectors=arrow('M180 90V195','gravity')+label(189,208,'mg','gravity')+arrow('M180 90L146 22')+label(123,22,'N')+
+  arrow('M180 90L250 55')+label(263,57,'f')+
+  '<path d="M104 92L66 111" fill="none" stroke="var(--diagram-muted)" stroke-width="1.5" marker-end="url(#'+id+'-component)"/>'+
+  '<text x="43" y="75" class="diagram-small">下滑 v</text>';
+ }
+ const desc={forces:'下滑物块的受力图：重力竖直向下，支持力垂直斜面向外，滑动摩擦力沿斜面向上。',components:'重力分解图：mg sinθ 沿斜面向下，mg cosθ 垂直斜面向内，两分量矢量和等于重力。',equations:'坐标约定图：x 正方向沿斜面向下，y 正方向垂直斜面向外。'}[scene];
+ return `<svg class="board-diagram" viewBox="0 0 355 235" role="img" aria-label="${desc}"><defs>${markers}</defs>${plane}${vectors}<circle cx="180" cy="90" r="3.3" fill="var(--diagram-force)"/></svg>`;
+};
+</script><input id="quick-images" type="file" accept="image/*" multiple hidden aria-label="选择图片"><div id="card-delete-zone" role="status" hidden>拖到这里删除</div><script>// 在原有内容块、编辑器、搜索与板书之上增加总览和整理交互。
+window.CardRecords = {
+ sync(state) {
+  state.cardOrder ||= ['essentials','thread','board','questions',...state.blocks.map(b=>b.id).filter(id=>!['essentials','thread','board','questions'].includes(id))];
+  for(const b of state.blocks){
+   if(!state.cardOrder.includes(b.id))state.cardOrder.push(b.id);
+   b.knowledgePointId ||= 'incline';b.sortOrder=state.cardOrder.indexOf(b.id);
+   for(const [i,q] of (b.items||[]).entries()){q.knowledgePointId ||= 'incline';q.sortOrder=i;this.image(q);}
+   this.image(b);
+  }
+ },
+ image(record){if(record.imageId){record.originalImage ||= {assetId:record.imageId,storage:'session',fileName:'',mimeType:'',size:0};record.originalImage.assetId=record.imageId;record.recognition ||= {status:'not-requested',text:'',formulas:[],diagramDescription:'',knowledgePoints:[],humanEdits:null};}}
+};
+window.createCardWorkbench = function(api){
+ const {state,btn,esc,body,save,render,show,close,editor,board,toast,uid,images,imageHTML,getEditing,setEditing}=api;
+ const coreIds=['essentials','thread','board','questions'];
+ const typeNames={text:'文字笔记',image:'图片',formula:'公式',questions:'例题',mistake:'易错点',board:'板书',flow:'核心主线',steps:'解题流程',diagram:'模型图',link:'关联内容'};
+ let focusedId=null,overviewScroll=0,lastRemoved=null,selectedId=null,deckScroll=0;
+ window.CardRecords.sync(state);
+ const get=id=>state.blocks.find(b=>b.id===id);
+ const isCore=b=>b&&coreIds.includes(b.id);
+ const ordered=()=>[...state.blocks].sort((a,b)=>state.cardOrder.indexOf(a.id)-state.cardOrder.indexOf(b.id));
+ const lines=b=>(b.text||'').split('\n').filter(Boolean);
+ const findQuestion=id=>{for(const b of state.blocks){const q=b.items?.find(q=>q.id===id);if(q)return {b,q};}return null;};
+ const record=id=>get(id)||findQuestion(id)?.q;
+ const smallTags=q=>(q.tags||'').split(/[,，]/).filter(Boolean).slice(0,3).map(t=>`<span class="tag">${esc(t)}</span>`).join('');
+ const truncate=(s,n=95)=>s.length>n?s.slice(0,n)+'…':s;
+ function count(b){if(b.type==='questions')return `${b.items.length} 道例题`;if(b.type==='board')return `${b.panels?.length||lines(b).length} 组图文步骤`;if(b.type==='image')return '1 张图片';if(b.type==='flow')return `${(b.text||'').split('→').length} 个步骤`;return `${lines(b).length} ${b.id==='essentials'?'个核心要求':'条内容'}`;}
+ function summary(b){
+  if(b.id==='essentials')return '受力分析 · 重力分解 · 摩擦力判断\n从学生要做到什么，到课堂检查问题。';
+  if(b.type==='flow')return b.text;
+  if(b.type==='board')return '真实受力 → 重力分解 → 运动方程\n图、公式与结论放在一起，直接抄写。';
+  if(b.type==='questions')return ['基础','典型','变式','综合'].map(c=>`${c} ${b.items.filter(q=>q.category===c).length}`).join('　');
+  return truncate(lines(b).map(l=>l.split('｜')[0]).join(' · ')||'点击补充内容，慢慢积累。');
+ }
+ function tools(id){return `<div class="organizer-tools">${btn('card-drag','⠿ 按住拖动','card-handle',`data-id="${id}" aria-label="拖动${esc(record(id)?.title||'卡片')}"`)}${btn('card-up','↑','',`data-id="${id}" aria-label="上移${esc(record(id)?.title||'卡片')}"`)}${btn('card-down','↓','',`data-id="${id}" aria-label="下移${esc(record(id)?.title||'卡片')}"`)}</div>`;}
+ function moduleCard(b){const core=isCore(b),icon={essentials:'✓',thread:'→',board:'▤',questions:'▣'}[b.id]||{image:'▧',formula:'ƒ',mistake:'!',text:'T',diagram:'∠'}[b.type]||'◇';
+ return `<article class="module-card ${core?'core-card':'support-card'}" data-card="${b.id}" data-group="${core?'core':'support'}" id="card-${b.id}"><div class="card-top"><span class="card-symbol" aria-hidden="true">${icon}</span><span class="card-count">${esc(count(b))}</span>${btn('card-menu','•••','card-menu',`data-id="${b.id}" aria-label="${esc(b.title)}卡片菜单"`)}</div>${btn('card-open',`<h2>${esc(b.title)}</h2>${b.type==='image'?imageHTML(b,'card-thumbnail'):`<p class="card-summary">${esc(summary(b))}</p>`}<span class="card-open-label">${b.type==='board'?'打开板书':b.type==='questions'?'查看例题':'展开查看'} <span aria-hidden="true">↗</span></span>`,'card-main',`data-id="${b.id}" aria-label="打开${esc(b.title)}"`)}${tools(b.id)}</article>`;
+ }
+ function question(q,b){return `<article class="question compact-question" data-card="${q.id}" data-group="questions-${b.id}" id="card-${q.id}"><div class="question-top"><span>${esc(q.category||'典型')} · ${esc(q.difficulty||'★★')}</span>${btn('card-menu','•••','card-menu',`data-id="${q.id}" aria-label="${esc(q.title)}卡片菜单"`)}</div>${btn('question-open',`${q.imageId?imageHTML(q,'question-thumb'):`<div class="question-text-thumb">${esc(truncate(q.text||'待补充题干',110))}</div>`}<div class="question-content"><h3>${esc(q.title||'未命名例题')}</h3><div class="tags">${smallTags(q)}</div><p class="why">${esc(truncate(q.note||'点击查看题干、解析与备注。',70))}</p><span class="card-open-label">查看完整题目 ↗</span></div>`,'question-main',`data-q="${q.id}" aria-label="打开例题${esc(q.title)}"`)}${tools(q.id)}</article>`;}
+ function flowBody(b){const steps=(b.text||'').split('→').map(s=>s.trim());const explanations=['先确认斜面是否固定、是否光滑，以及物块正在怎样运动。','隔离物块，找出每个真实力的施力物体。','沿斜面与垂直斜面建系，并明确正方向。','把重力分到两条坐标轴上，不重复计入分力。','分别列两方向方程，先求支持力，再求加速度。','结合速度方向判断加速或减速；停止后重新判断。'];return `<ol class="teaching-route">${steps.map((s,i)=>`<li><b>${esc(s)}</b><p>${esc(b.stepNotes?.[i]||explanations[i]||'明确这一步的条件与结果。')}</p></li>`).join('')}</ol>`;}
+ function masteryBody(b){const tips=[['每个力都能找到来源，后面的合力方程才可靠。','把速度、加速度当成力，或漏掉接触力。'],['让坐标顺着约束方向，两个方向的方程更容易分开。','混淆正弦和余弦，或将重力与分力重复相加。'],['摩擦方向与大小取决于接触状态，不能只背一个公式。','静止时直接使用滑动摩擦公式，停止后不重新判断。'],['先处理垂直方向，可以正确确定支持力和摩擦力。','一律认为 N = mg，或者有外力时仍沿用旧方程。'],['加速度说明速度怎样变化，速度决定此刻向哪边运动。','把负加速度理解成已经反向运动。']];const defaults=window.PHYSICS_SEED.blocks.find(x=>x.id==='essentials').text.split('\n');return `<div class="mastery-list">${lines(b).map((line,i)=>{const [title,detail,check]=line.split('｜');const index=defaults.findIndex(x=>x.split('｜')[0]===title);return `<article class="mastery-item"><span class="mastery-number">${i+1}</span><div><small>学生必须做到什么</small><h3>${esc(title)}</h3>${detail?`<p>${esc(detail)}</p>`:''}${index>=0?`<small>为什么重要</small><p>${esc(tips[index][0])}</p><small>常见问题</small><p>${esc(tips[index][1])}</p>`:''}${check?`<small>教师检查问题</small><p class="mastery-check">${esc(check)}</p>`:''}</div></article>`;}).join('')}</div>`;}
+ function workspace(){
+  const b=get(focusedId);
+  const banner=`<div class="arrange-banner"><span>⠿ 整理模式 · 按住卡片拖动，或用「•••」移动与删除</span>${btn('edit','完成整理','primary')}</div>`;
+  if(b)return `${banner}<section class="focus-view"><div class="focus-toolbar">${btn('overview','← 收起并返回总览','outline')}<span class="muted">${esc(count(b))}</span>${btn('card-menu','•••','outline',`data-id="${b.id}" aria-label="${esc(b.title)}卡片菜单"`)}</div><div class="focus-heading"><h2>${esc(b.title)}</h2><p>${b.type==='questions'?'先浏览，再打开值得讲的一道题。':'看完后收起，随时回到斜面问题总览。'}</p></div><div id="block-${b.id}" class="focus-content">${b.id==='essentials'&&b.type==='text'?masteryBody(b):b.type==='flow'?flowBody(b):body(b)}</div>${b.type==='questions'?btn('new','＋ 新增例题','add-bottom','data-type="questions"'):''}</section>`;
+  const blocks=ordered();return `${banner}<div class="overview-label"><span>主卡区域</span><small>← 左右滑动翻阅 → · ${window.PHYSICS_PUBLICATION?'课堂阅读':'长按整理'}</small></div><nav class="deck-index" aria-label="主卡导航">${blocks.filter(isCore).map(b=>btn('deck-select',esc(b.title),'',`data-id="${b.id}" aria-pressed="false"`)).join('')}${btn('deck-prev','←','','aria-label="向左翻阅"')}${btn('deck-next','→','','aria-label="向右翻阅"')}</nav><div class="core-grid" tabindex="0" role="region" aria-label="左右滑动翻阅主卡">${blocks.filter(isCore).map(moduleCard).join('')||'<p class="empty">核心卡片已移除，可使用撤销恢复。</p>'}</div><div class="other-heading"><h2>次级内容 <small>${blocks.filter(b=>!isCore(b)).length}</small></h2><span>公式、提醒和随手收集的资料</span></div><div class="support-grid">${blocks.filter(b=>!isCore(b)).map(moduleCard).join('')}${btn('add','＋ 添加内容','support-add')}</div>`;
+ }
+ function selectCard(id){selectedId=id;paintSelection();document.querySelector(`#card-${id}`)?.scrollIntoView({block:'nearest',inline:'center',behavior:'smooth'});}
+ function paintSelection(){document.querySelectorAll('.core-card').forEach(el=>{const on=el.dataset.card===selectedId;el.classList.toggle('is-selected',on);const button=el.querySelector('.card-main');button?.setAttribute('aria-pressed',String(on));const hint=el.querySelector('.card-open-label');if(hint)hint.textContent=on?'已选中 · 再点一次展开 ↗':'点击选中 · 再点展开 ↗';});document.querySelectorAll('[data-action="deck-select"]').forEach(el=>el.setAttribute('aria-pressed',String(el.dataset.id===selectedId)));}
+ function openCard(id){const b=get(id);if(!b)return;deckScroll=document.querySelector('.core-grid')?.scrollLeft||0;if(b.type==='board'){board();return;}overviewScroll=window.scrollY;focusedId=id;render();window.scrollTo({top:0,behavior:'instant'});}
+ function overview(){focusedId=null;render();window.scrollTo({top:overviewScroll,behavior:'instant'});}
+ function setArrange(value,rerender=true){setEditing(value);if(rerender)render();else{document.querySelector('.shell')?.classList.toggle('arranging',value);document.querySelectorAll('[data-action="edit"]').forEach(b=>{b.textContent=value?'✓ 完成整理':'⠿ 整理';});}}
+ function menu(id){const r=record(id);if(!r)return;show(r.title||'卡片菜单',`<div class="card-menu-grid">${btn('card-edit','✎ 编辑内容','outline',`data-id="${id}"`)}${btn('card-copy','▣ 复制卡片','outline',`data-id="${id}"`)}${btn('card-move','↕ 移动到…','outline',`data-id="${id}"`)}${btn('card-type','◇ 修改类型','outline',`data-id="${id}"`)}${btn('card-delete','删除卡片','outline danger-text',`data-id="${id}"`)}</div>${r.imageId?btn('recognize','识别为图文','future-action'):''}${findQuestion(id)?btn('student','标记为学生错题','future-action'):''}`);}
+ function group(id){const b=get(id);return b?(isCore(b)?'core':'support'):`questions-${findQuestion(id)?.b.id}`;}
+ function siblings(id){const b=get(id);return b?ordered().filter(x=>isCore(x)===isCore(b)).map(x=>x.id):(findQuestion(id)?.b.items||[]).map(q=>q.id);}
+ function reorder(id,target,after=false){if(id===target||group(id)!==group(target))return false;const b=get(id);const list=b?state.cardOrder:findQuestion(id).b.items.map(q=>q.id);const source=list.indexOf(id);if(source<0||!list.includes(target))return false;list.splice(source,1);list.splice(list.indexOf(target)+(after?1:0),0,id);if(!b){const owner=findQuestion(id).b;owner.items.sort((a,b)=>list.indexOf(a.id)-list.indexOf(b.id));}save();render();return true;}
+ function moveOne(id,delta){const ids=siblings(id),idx=ids.indexOf(id),target=ids[idx+delta];if(target)reorder(id,target,delta>0);else toast('已经在这一组的边缘');}
+ function moveMenu(id){const ids=siblings(id);show('移动卡片',`<p class="muted">${get(id)?(isCore(get(id))?'在四个核心模块中调整位置。':'在其他内容中调整位置。'):'在当前例题集合中调整位置。'}</p><div class="move-list">${ids.filter(i=>i!==id).map(i=>btn('card-place',`放到「${esc(record(i).title)}」前面`,'outline',`data-id="${id}" data-target="${i}"`)).join('')}${ids.length>1?btn('card-place','移到最后','outline',`data-id="${id}" data-target="${ids.filter(i=>i!==id).at(-1)}" data-after="true"`):'<p class="empty">这一组只有一张卡片。</p>'}</div>`);}
+ function remove(id){const r=record(id);if(!r)return;show('删除「'+(r.title||'卡片')+'」',`<p>移除这张卡片及其内容。删除后可以撤销。</p><div class="form-actions">${btn('close','取消','outline')}${btn('card-delete-confirm','删除','primary',`data-id="${id}"`)}</div>`);}
+ function removeConfirmed(id){const b=get(id),found=findQuestion(id);if(!b&&!found)return;const affected=new Set(b?(b.items||[]).map(q=>q.id):[id]);lastRemoved={item:structuredClone(b||found.q),ownerId:b?null:found.b.id,index:b?state.blocks.indexOf(b):found.b.items.indexOf(found.q),orderIndex:state.cardOrder.indexOf(id),boardRefs:state.boardQuestions.filter(q=>affected.has(q))};if(b){state.blocks=state.blocks.filter(b=>b.id!==id);state.cardOrder=state.cardOrder.filter(x=>x!==id);}else found.b.items=found.b.items.filter(q=>q.id!==id);state.boardQuestions=state.boardQuestions.filter(q=>!affected.has(q));if(focusedId===id)focusedId=null;save();close();render();toast('已删除，可点击页面下方「撤销删除」');}
+ function copy(id){const r=record(id);if(!r)return;const clone=structuredClone(r);clone.id=uid();clone.title=(r.title||'未命名')+' · 副本';if(get(id)){if(clone.items)clone.items=clone.items.map(q=>({...q,id:uid()}));state.blocks.push(clone);state.cardOrder.splice(state.cardOrder.indexOf(id)+1,0,clone.id);}else{const owner=findQuestion(id).b;owner.items.splice(owner.items.findIndex(q=>q.id===id)+1,0,clone);}save();close();render();toast('已复制卡片');}
+ function editCard(id){close();const b=get(id);if(b){if(b.type==='questions'){show('编辑例题模块',`<form id="card-title-form"><label for="module-title">模块名称</label><input id="module-title" name="title" value="${esc(b.title)}"><div class="form-actions"><button type="submit" class="primary">保存</button></div></form>`);document.querySelector('#card-title-form').onsubmit=e=>{e.preventDefault();b.title=new FormData(e.target).get('title')||'例题';save();close();render();};}else editor(b.type,id);}else{const found=findQuestion(id);if(found)editor('questions',found.b.id,id);}}
+ function typeMenu(id){const r=record(id);if(!r)return;if(r.items?.length){show('修改类型',`<p>这是一个例题集合。请在单道例题的菜单中修改类型，以保留集合里的所有题目。</p>`);return;}show('修改卡片类型',`<p class="muted">原图、文字和备注会保留。</p><div class="card-menu-grid">${['text','image','formula','mistake','board','questions','link'].map(t=>btn('card-convert',typeNames[t],'outline',`data-id="${id}" data-type="${t}" ${t==='image'&&!r.imageId?'disabled':''}`)).join('')}</div>`);}
+ function convert(id,type){const r=record(id);if(!r)return;const found=findQuestion(id);if(type==='questions'&&!found){let owner=state.blocks.find(b=>b.type==='questions'&&b.id!==id);if(!owner){owner={id:uid(),title:'例题',type:'questions',items:[]};state.blocks.push(owner);}owner.items.push({...structuredClone(r),id:uid(),type:'question',category:'典型',difficulty:'★★',analysis:r.analysis||'',note:r.note||r.text});state.blocks=state.blocks.filter(b=>b.id!==id);focusedId=owner.id;}else if(found&&type!=='questions'){const block={...structuredClone(r),id:uid(),type};state.blocks.push(block);found.b.items=found.b.items.filter(q=>q.id!==id);state.boardQuestions=state.boardQuestions.filter(q=>q!==id);focusedId=null;}else if(!found)r.type=type;save();close();render();toast('类型已修改，原有内容已保留');}
+ function newCard(type){if(type==='image'){close();document.querySelector('#quick-images').click();return;}if(type==='node'){editor(type);return;}close();const b={id:uid(),type:type==='module'?'text':type,title:type==='module'?'自定义模块':typeNames[type]||'文字笔记',text:'',knowledgePointId:'incline'};if(type==='questions'){let owner=state.blocks.find(b=>b.type==='questions');if(!owner){owner={id:uid(),type:'questions',title:'例题',items:[]};state.blocks.push(owner);}const q={id:uid(),title:'新例题',text:'',category:'典型',difficulty:'★★',tags:'',note:'',analysis:'',knowledgePointId:'incline'};owner.items.push(q);focusedId=owner.id;save();render();editor('questions',owner.id,q.id);return;}state.blocks.push(b);state.cardOrder.push(b.id);focusedId=null;save();render();editor(b.type,b.id);}
+ function ingest(files){let added=0;for(const file of files){if(!file.type.startsWith('image/'))continue;const imageId=uid();images.set(imageId,URL.createObjectURL(file));const block={id:uid(),type:'image',title:file.name.replace(/\.[^.]+$/,'')||'新图片',text:'',tags:'',imageId,imageKind:'image',knowledgePointId:'incline',originalImage:{assetId:imageId,storage:'session',fileName:file.name,mimeType:file.type,size:file.size}};window.CardRecords.image(block);state.blocks.push(block);state.cardOrder.splice(coreIds.length,0,block.id);added++;}if(!added){toast('请选择图片文件');return;}focusedId=null;save();render();document.querySelector('.other-heading')?.scrollIntoView({block:'start',behavior:'smooth'});toast(`已添加 ${added} 张图片，可稍后补充信息`);}
+ function openQuestion(id){const found=findQuestion(id);if(!found)return;const q=found.q;show(q.title||'例题',`<div class="question-detail">${imageHTML(q,'detail-image')}<div class="tags"><span class="tag">${esc(q.category)} · ${esc(q.difficulty)}</span>${smallTags(q)}</div><h3>题干</h3><p>${esc(q.text||'题干见原图，可在编辑中补充文字。')}</p><h3>解析</h3><p>${esc(q.analysis||'尚未补充解析。')}</p><h3>板书解法</h3><p>${esc(q.boardSolution||q.analysis||'可在编辑中补充适合学生抄写的解法。')}</p><h3>备注 · 为什么值得做</h3><p>${esc(q.note||'尚未补充备注。')}</p><div class="form-actions">${btn('card-edit','编辑','outline',`data-id="${id}"`)}${btn('board-add',state.boardQuestions.includes(id)?'已加入板书':'加入板书','outline',`data-q="${id}"`)}${btn('close','返回例题列表','primary')}</div></div>`,'question-dialog');}
+ function afterRender(){paintSelection();const deck=document.querySelector('.core-grid');if(deck){deck.scrollLeft=deckScroll;deck.addEventListener('scroll',()=>{deckScroll=deck.scrollLeft;},{passive:true});}const shell=document.querySelector('.shell');shell?.classList.toggle('arranging',getEditing());const old=document.querySelector('#delete-undo');if(old)old.remove();if(lastRemoved){const el=document.createElement('div');el.id='delete-undo';el.innerHTML=`<span>已删除卡片</span>${btn('card-undo','撤销删除','outline')}${btn('dismiss-undo','✕','','aria-label="关闭撤销提示"')}`;document.querySelector('#app').append(el);}}
+ function handle(el){const {action:a,id,type,q,target}=el.dataset;switch(a){
+  case 'card-open':if(!getEditing()){if(isCore(get(id))&&selectedId!==id)selectCard(id);else openCard(id);}return true;
+  case 'deck-select':selectCard(id);return true;
+  case 'deck-prev':case 'deck-next':{const deck=document.querySelector('.core-grid');deck?.scrollBy({left:(a==='deck-next'?1:-1)*deck.clientWidth*.65,behavior:'smooth'});return true;}
+  case 'question-open':if(!getEditing())openQuestion(q);return true;
+  case 'overview':close();overview();return true;
+  case 'edit':setArrange(!getEditing());return true;
+  case 'card-menu':menu(id);return true;
+  case 'question-more':menu(q);return true;
+  case 'card-edit':editCard(id);return true;
+  case 'card-copy':copy(id);return true;
+  case 'card-move':moveMenu(id);return true;
+  case 'card-up':moveOne(id,-1);return true;
+  case 'card-down':moveOne(id,1);return true;
+  case 'card-place':close();reorder(id,target,el.dataset.after==='true');return true;
+  case 'card-delete':case 'block-delete':remove(id);return true;
+  case 'question-delete':remove(q);return true;
+  case 'card-delete-confirm':removeConfirmed(id);return true;
+  case 'card-undo':if(lastRemoved){const old=lastRemoved;if(old.ownerId){const owner=get(old.ownerId);if(owner)owner.items.splice(old.index,0,old.item);}else{state.blocks.splice(old.index,0,old.item);state.cardOrder.splice(Math.max(0,old.orderIndex),0,old.item.id);}state.boardQuestions=[...new Set([...state.boardQuestions,...old.boardRefs])];lastRemoved=null;save();render();toast('已恢复删除的内容');}return true;
+  case 'dismiss-undo':lastRemoved=null;afterRender();return true;
+  case 'card-type':typeMenu(id);return true;
+  case 'card-convert':convert(id,type);return true;
+  case 'recognize':toast('此功能将在后续版本开放');return true;
+  case 'new':newCard(type);return true;
+  case 'result':close();focusedId=id;api.setCurrent('incline');api.resetCategory();render();window.scrollTo({top:0});return true;
+  case 'node':focusedId=null;return false;
+  case 'more':show('工作台选项',`${btn('parent','← 返回上一级','outline')}${btn('overview','斜面问题总览','outline')}<p class="muted" style="margin-top:16px">文字和卡片排序保存在当前浏览器。图片只保留本次预览，刷新后需重新选择。图片识别和学生错题为预留入口。</p><p class="muted">修改前的文件已备份在 backups 文件夹；恢复方法见使用说明。</p>`);return true;
+  default:return false;
+ }}
+ return {workspace,question,handle,afterRender,ingest,reorder,remove,group,setArrange,get focusedId(){return focusedId;}};
+};
+</script><script>// 滑动先于长按发生时交还浏览器滚动；超过阈值后才接管触摸移动。
+window.installCardGestures = function(api){
+ let pending=null,drag=null,suppressUntil=0,frame=0;
+ const threshold=480,slop=10;
+ const app=document.querySelector('#app'),bin=document.querySelector('#card-delete-zone');
+ function point(e){const p=e.touches?.[0]||e.changedTouches?.[0]||e;return {x:p.clientX,y:p.clientY};}
+ function cancelPending(){if(pending)clearTimeout(pending.timer);pending=null;}
+ function begin(card,p){
+  if(!card.isConnected)return;
+  api.arrange();suppressUntil=Date.now()+900;
+  drag={id:card.dataset.card,group:card.dataset.group,source:card,x:p.x,y:p.y,target:null,after:false,deleting:false};
+  card.classList.add('being-dragged');document.body.classList.add('card-dragging');
+  const ghost=card.cloneNode(true);ghost.removeAttribute('id');ghost.setAttribute('aria-hidden','true');ghost.inert=true;ghost.className='drag-ghost';ghost.style.width=Math.min(card.getBoundingClientRect().width,255)+'px';document.body.append(ghost);drag.ghost=ghost;
+  bin.hidden=false;bin.textContent='拖到这里删除';update(p);frame=requestAnimationFrame(autoScroll);
+ }
+ function start(e){
+  if(e.button!==undefined&&e.button!==0)return;
+  if(e.touches&&e.touches.length!==1){end(true);return;}
+  const card=e.target.closest('[data-card]');
+  if(!card||e.target.closest('.card-menu,.organizer-tools button:not(.card-handle),input,textarea,select'))return;
+  cancelPending();const p=point(e);
+  if(!e.touches&&e.target.closest('.card-handle')&&card.closest('.arranging')){begin(card,p);return;}
+  pending={card,start:p,timer:setTimeout(()=>{pending=null;begin(card,p);},threshold)};
+ }
+ function clearMarkers(){document.querySelectorAll('.insert-before,.insert-after').forEach(el=>el.classList.remove('insert-before','insert-after'));}
+ function update(p){
+  if(!drag)return;drag.x=p.x;drag.y=p.y;drag.ghost.style.left=(p.x+14)+'px';drag.ghost.style.top=(p.y+14)+'px';
+  clearMarkers();const r=bin.getBoundingClientRect();drag.deleting=p.x>=r.left&&p.x<=r.right&&p.y>=r.top&&p.y<=r.bottom;bin.classList.toggle('delete-ready',drag.deleting);drag.target=null;
+  if(drag.deleting){bin.textContent='松手后确认删除';return;}
+  bin.textContent='拖到这里删除';const target=document.elementFromPoint(p.x,p.y)?.closest('[data-card]');
+  if(!target||target===drag.source)return;
+  if(target.dataset.group!==drag.group){bin.textContent='请在同一组卡片内排序，或拖到这里删除';return;}
+  const tr=target.getBoundingClientRect();drag.after=Math.abs(p.y-(tr.top+tr.height/2))<tr.height*.3?p.x>tr.left+tr.width/2:p.y>tr.top+tr.height/2;
+  drag.target=target.dataset.card;target.classList.add(drag.after?'insert-after':'insert-before');
+ }
+ function autoScroll(){if(!drag)return;const deck=drag.source.closest('.core-grid');if(deck){const r=deck.getBoundingClientRect();const dx=drag.x<r.left+45?-10:drag.x>r.right-45?10:0;if(dx&&!drag.deleting){deck.scrollLeft+=dx;update({x:drag.x,y:drag.y});}}const speed=drag.y<105?-12:drag.y>innerHeight-150?12:0;if(speed&&!drag.deleting){window.scrollBy(0,speed);update({x:drag.x,y:drag.y});}frame=requestAnimationFrame(autoScroll);}
+ function move(e){const p=point(e);if(pending&&Math.hypot(p.x-pending.start.x,p.y-pending.start.y)>slop){cancelPending();suppressUntil=Date.now()+700;}if(!drag)return;if(e.cancelable)e.preventDefault();update(p);}
+ function cleanup(){cancelAnimationFrame(frame);clearMarkers();bin.hidden=true;bin.classList.remove('delete-ready');document.body.classList.remove('card-dragging');if(drag){drag.source.classList.remove('being-dragged');drag.ghost.remove();}drag=null;}
+ function end(cancelled=false){cancelPending();if(!drag)return;const result={...drag};suppressUntil=Date.now()+700;cleanup();if(cancelled){api.render();return;}if(result.deleting)api.remove(result.id);else if(result.target)api.reorder(result.id,result.target,result.after);else api.render();}
+ app.addEventListener('pointerdown',e=>{if(e.pointerType!=='touch')start(e);});
+ document.addEventListener('pointermove',e=>{if(e.pointerType!=='touch')move(e);});
+ document.addEventListener('pointerup',e=>{if(e.pointerType!=='touch')end();});
+ document.addEventListener('pointercancel',e=>{if(e.pointerType!=='touch')end(true);});
+ app.addEventListener('touchstart',start,{passive:true});
+ document.addEventListener('touchmove',e=>{if(e.touches.length!==1){end(true);return;}move(e);},{passive:false});
+ document.addEventListener('touchend',()=>end(),{passive:true});
+ document.addEventListener('touchcancel',()=>end(true),{passive:true});
+ app.addEventListener('contextmenu',e=>{if(e.target.closest('[data-card]'))e.preventDefault();});
+ app.addEventListener('dragstart',e=>{if(e.target.closest('[data-card]'))e.preventDefault();});
+ app.addEventListener('click',e=>{if(Date.now()<suppressUntil){e.preventDefault();e.stopImmediatePropagation();}},{capture:true});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&(drag||pending)){e.preventDefault();end(true);}});
+ window.addEventListener('blur',()=>end(true));
+};
+</script><script>/* 单文件发布包：只读取明确列出的网页资源，不包含本地启动脚本或日志。 */
+window.PhysicsPublish = {
+ async build(state, images, read = async path => {
+  const response = await fetch(path, {cache:'no-store'});
+  if(!response.ok)throw new Error('无法读取 '+path+'，请通过工作台快捷方式打开后再导出。');
+  return response.text();
+ }, imageRead = async src => {
+  const response=await fetch(src);
+  if(!response.ok)throw new Error('图片读取失败');
+  const blob=await response.blob();
+  return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsDataURL(blob);});
+ }) {
+  const snapshot=structuredClone(state), embedded={};
+  const records=snapshot.blocks.flatMap(b=>[b,...(b.items||[])]);
+  const missing=records.filter(r=>r.imageId&&!images.get(r.imageId));
+  if(missing.length)throw new Error('以下图片已不在本次页面中，请先编辑卡片重新选图，再导出：'+missing.map(r=>r.title||'未命名图片').join('、'));
+  for(const record of records){if(record.imageId&&!embedded[record.imageId])embedded[record.imageId]=await imageRead(images.get(record.imageId));}
+  const version=new Date().toISOString();
+  const publication={version,state:snapshot,images:embedded};
+  const scripts=['data.js','board-diagrams.js','card-workbench.js','card-gestures.js','publish.js','app.js'];
+  const styles=['styles.css','cards.css','blue-deck.css'];
+  const files=await Promise.all([...scripts,...styles].map(async name=>[name,await read(name)]));
+  let html=await read('index.html');
+  for(const [name,source] of files){
+   const asset=name.replace(/\./g,'\\.');
+   if(name.endsWith('.css'))html=html.replace(new RegExp(`<link rel="stylesheet" href="${asset}(?:\\?[^"<>]*)?">`),()=>`<style>${source.replace(/<\/style/gi,'<\\/style')}</style>`);
+   else html=html.replace(new RegExp(`<script src="${asset}(?:\\?[^"<>]*)?"><\/script>`),()=>`<script>${source.replace(/<\/script/gi,'<\\/script')}<\/script>`);
+  }
+  html=html.replace('</head>',()=>`<script>window.PHYSICS_PUBLICATION=${JSON.stringify(publication).replace(/</g,'\\u003c')};<\/script></head>`);
+  return {html,version,imageCount:Object.keys(embedded).length};
+ },
+ zip(html){
+  const data=new TextEncoder().encode(html),name=new TextEncoder().encode('index.html');
+  let crc=0xffffffff;for(const byte of data){crc^=byte;for(let i=0;i<8;i++)crc=(crc>>>1)^((crc&1)?0xedb88320:0);}crc=(crc^0xffffffff)>>>0;
+  const localSize=30+name.length+data.length,centralSize=46+name.length;
+  const bytes=new Uint8Array(localSize+centralSize+22),view=new DataView(bytes.buffer);
+  const u16=(offset,value)=>view.setUint16(offset,value,true),u32=(offset,value)=>view.setUint32(offset,value,true);
+  u32(0,0x04034b50);u16(4,20);u16(12,33);u32(14,crc);u32(18,data.length);u32(22,data.length);u16(26,name.length);bytes.set(name,30);bytes.set(data,30+name.length);
+  const c=localSize;u32(c,0x02014b50);u16(c+4,20);u16(c+6,20);u16(c+14,33);u32(c+16,crc);u32(c+20,data.length);u32(c+24,data.length);u16(c+28,name.length);bytes.set(name,c+46);
+  const e=c+centralSize;u32(e,0x06054b50);u16(e+8,1);u16(e+10,1);u32(e+12,centralSize);u32(e+16,localSize);return bytes;
+ },
+ async download(state,images,toast){
+  try{
+   toast('正在打包文字、图片和卡片顺序…');
+   const result=await this.build(state,images);
+   if(new Blob([result.html]).size>24*1024*1024)throw new Error('发布文件超过 24 MB，不适合直接在 GitHub 网页上传。请先缩小题目图片或减少本次发布的图片，再导出。');
+   const url=URL.createObjectURL(new Blob([this.zip(result.html)],{type:'application/zip'}));
+   const link=document.createElement('a');link.href=url;link.download='斜面问题-发布包.zip';document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
+   toast(`发布包已生成，包含 ${result.imageCount} 张图片。解压后上传包内的 index.html。`);
+  }catch(error){alert('未能导出发布文件\n\n'+error.message);}
+ }
+};
+</script><script>(() => {
+'use strict';
+const KEY='physics-workbench-cards-v2';
+let state=structuredClone(window.PHYSICS_SEED),storageOK=true;
+const publication=window.PHYSICS_PUBLICATION;
+if(publication)state=structuredClone(publication.state);
+try{const saved=publication?null:JSON.parse(localStorage.getItem(KEY)||localStorage.getItem('physics-workbench-v1'));if(saved&&Array.isArray(saved.blocks)&&Array.isArray(saved.nodes))state={...state,...saved};}catch{storageOK=false;}
+// 仅升级未修改过的旧示例；自定义正文和已删除的模块不覆盖、不恢复。
+const previousDefaults={essentials:'正确画出重力、支持力和摩擦力\n沿斜面、垂直斜面建立坐标系\n根据相对运动或趋势判断摩擦力方向\n沿选定方向列牛顿第二定律',board:'受力分析｜mg · N · f\n重力分解｜mg sinθ · mg cosθ\n牛顿第二定律｜ΣFx = ma；ΣFy = 0\n易错提醒｜先判断摩擦方向，再核对 sin / cos'};
+for(const id of ['essentials','board']){const block=state.blocks.find(b=>b.id===id),seed=window.PHYSICS_SEED.blocks.find(b=>b.id===id);if(!block)continue;if(block.text===previousDefaults[id])block.text=seed.text;if(id==='board'&&!block.panels)block.panels=structuredClone(seed.panels);}
+let current='incline',treeOpen=innerWidth>900,edit=false,category='全部',libraryType='all',boardMode='structure',boardWide=false,lastFocus;
+const mainThread=state.blocks.find(b=>b.id==='thread');
+if(mainThread?.text==='受力分析 → 建立坐标系 → 分解重力 → 列运动方程 → 判断运动状态')mainThread.text=window.PHYSICS_SEED.blocks.find(b=>b.id==='thread').text;
+const expanded=new Set(['root','mechanics','newton','models']),images=new Map(Object.entries(publication?.images||{}));
+const app=document.querySelector('#app'),modal=document.querySelector('#modal');
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=()=> 'id'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const labels={text:'文字笔记',image:'图片',formula:'公式',questions:'例题',mistake:'易错点',board:'板书',flow:'核心主线',steps:'解题流程',diagram:'模型图',link:'关联内容'};
+const btn=(action,text,cls='',extra='')=>`<button type="button" data-action="${action}" class="${cls}" ${extra}>${text}</button>`;
+function toast(text){const el=document.querySelector('#toast');el.textContent=text;el.classList.add('visible');clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove('visible'),2800);}
+function save(){if(publication)return;window.CardRecords.sync(state);try{localStorage.setItem(KEY,JSON.stringify(state));storageOK=true;}catch{storageOK=false;toast('浏览器暂时无法保存，当前修改仅保留在本次打开期间。');}}
+function path(id){const out=[];let n=state.nodes.find(n=>n.id===id);while(n){out.unshift(n);n=state.nodes.find(x=>x.id===n.parent);}return out;}
+function tree(id='root',depth=0){
+ const n=state.nodes.find(n=>n.id===id);if(!n)return '';
+ const children=state.nodes.filter(x=>x.parent===id),open=expanded.has(id);
+ return `<div class="tree-item" style="--depth:${depth}"><div class="tree-row ${current===id?'active':''}">${children.length?btn('branch','<span class="branch-chevron">›</span>','branch',`data-id="${id}" aria-label="展开或收起${esc(n.title)}" aria-expanded="${open}" aria-controls="children-${id}"`):'<span class="tree-leaf" aria-hidden="true">◇</span>'}${btn('node',`<span>${esc(n.title)}</span>${current===id?'<span class="node-current" aria-hidden="true"></span>':''}`,'node',`data-id="${id}" ${current===id?'aria-current="page"':''}`)}</div>${children.length?`<div class="tree-children ${open?'is-open':''}" id="children-${id}" ${open?'':'inert'}><div class="tree-children-inner">${children.map(x=>tree(x.id,depth+1)).join('')}</div></div>`:''}</div>`;
+}
+function toggleTree(){
+ treeOpen=!treeOpen;const shell=app.querySelector('.shell'),sidebar=app.querySelector('aside.tree');
+ shell.classList.toggle('closed',!treeOpen);sidebar.inert=!treeOpen;
+ app.querySelectorAll('[data-action="tree"]').forEach(button=>{button.setAttribute('aria-expanded',String(treeOpen));if(button.getAttribute('aria-label')==='切换知识树')button.innerHTML=treeOpen?'☰ 收起目录':'☰ 知识树';});
+}
+function diagram(){return `<svg viewBox="0 0 400 210" role="img" aria-label="物块沿斜面下滑：重力竖直向下，支持力垂直斜面向上，摩擦力沿斜面向上"><defs><marker id="arrow-g" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0 0L6 3L0 6" fill="none" stroke="#426e5b"/></marker><marker id="arrow-r" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0 0L6 3L0 6" fill="none" stroke="#b1764d"/></marker></defs><path d="M65 175H335L335 40Z" fill="#e1e7d8" stroke="#849579" stroke-width="1.5"/><path d="M106 175A42 42 0 0 0 102 156" fill="none" stroke="#879679"/><text x="112" y="168" font-size="17" fill="#627252">θ</text><g transform="translate(205 105) rotate(-26.565)"><rect x="-24" y="-30" width="48" height="32" rx="3" fill="#b5c6a4" stroke="#617f56" stroke-width="1.5"/></g><circle cx="199" cy="92" r="3" fill="#355c4b"/><path d="M199 92V178" stroke="#b1764d" stroke-width="2" marker-end="url(#arrow-r)"/><path d="M199 92L166 26M199 92L263 60" stroke="#426e5b" stroke-width="2" marker-end="url(#arrow-g)"/><text x="207" y="170" fill="#a36a43" font-family="Georgia" font-size="19">mg</text><text x="143" y="29" fill="#426e5b" font-family="Georgia" font-size="19">N</text><text x="270" y="61" fill="#426e5b" font-family="Georgia" font-size="19">f</text><text x="35" y="37" fill="#8b967f" font-size="11">固定斜面 · 沿斜面下滑</text></svg>`;}
+function imageHTML(item,cls='image-content'){if(!item.imageId)return '';const src=images.get(item.imageId);return src?`<img class="${cls}" src="${esc(src)}" alt="${esc(item.title||'已添加的图片')}" data-action="zoom" data-image="${item.imageId}">`:'<div class="image-missing">图片为本次临时预览，刷新后需重新选择。文字资料已保留。</div>';}
+function question(q,b){return cards.question(q,b);}
+function body(b){const lines=(b.text||'').split('\n').filter(Boolean);switch(b.type){
+case 'flow':return `<div class="flow">${(b.text||'').split('→').map(t=>`<span>${esc(t.trim())}</span>`).join('<b>→</b>')}</div>`;
+case 'text':return b.id==='essentials'?`<div class="mastery-list">${lines.map((l,i)=>{const [title,detail,check]=l.split('｜');return `<article class="mastery-item"><span class="mastery-number">${i+1}</span><div><h3>${esc(title)}</h3>${detail?`<p>${esc(detail)}</p>`:''}${check?`<p class="mastery-check">${esc(check)}</p>`:''}</div></article>`;}).join('')}</div>`:`<ul class="bullets">${lines.map(l=>`<li>${esc(l)}</li>`).join('')}</ul>`;
+case 'diagram':return `<div class="diagram-wrap">${diagram()}</div><p class="diagram-caption">${esc(b.text)}</p>`;
+case 'formula':return `<div class="formula-grid">${lines.map(l=>{const parts=l.split('|');return `<div class="formula"><small>${parts.length>1?esc(parts[0]):'公式'}</small><div class="math">${esc(parts.length>1?parts.slice(1).join('|'):l)}</div></div>`;}).join('')}</div>${b.note?`<p class="formula-note">${esc(b.note)}</p>`:''}`;
+case 'steps':return `<div class="steps">${lines.map((l,i)=>{const [title,...rest]=l.split('｜');return `<div class="step"><b>0${i+1} ${esc(title)}</b>${esc(rest.join('｜'))}</div>`;}).join('')}</div>`;
+case 'questions':{const qs=b.items.filter(q=>category==='全部'||q.category===category);return `<div class="question-filters">${['全部','基础','典型','变式','综合'].map(c=>btn('filter',c,category===c?'selected':'',`data-category="${c}" aria-pressed="${category===c}"`)).join('')}</div><div class="question-grid">${qs.length?qs.map(q=>question(q,b)).join(''):'<p class="empty">这个分类还没有例题。可点击「添加内容」收集一道。</p>'}</div>`;}
+case 'mistake':return lines.map(l=>{const [a,...r]=l.split('｜');return `<div class="mistake-row"><b>${esc(a)}</b>${esc(r.join('｜'))}</div>`;}).join('');
+case 'board':return `<div class="board-teaser"><div><h3>上课前，再看一遍</h3><p>图示与公式对应 / 学生抄写</p></div>${btn('board','打开板书 ↗','outline')}</div>`;
+case 'image':return `${imageHTML(b)}<p class="plain-text">${esc(b.text)}</p>${b.tags?`<span class="tag">${esc(b.tags)}</span>`:''}`;
+case 'link':return `<p class="plain-text">${esc(b.text)}</p>`;
+default:return `<p class="plain-text">${esc(b.text)}</p>`;
+}}
+function ordered(){const ids=state.orders[state.template];if(ids)return [...state.blocks].sort((a,b)=>(ids.indexOf(a.id)<0?999:ids.indexOf(a.id))-(ids.indexOf(b.id)<0?999:ids.indexOf(b.id)));if(state.template==='lecture'){const seq=['thread','diagram','essentials','formulas','process','questions','variants','mistakes','board','notes'];return [...state.blocks].sort((a,b)=>(seq.indexOf(a.id)<0?999:seq.indexOf(a.id))-(seq.indexOf(b.id)<0?999:seq.indexOf(b.id)));}return state.blocks;}
+function render(){
+ const node=state.nodes.find(n=>n.id===current)||state.nodes[0];
+ app.innerHTML=`<div class="shell ${treeOpen?'':'closed'}"><aside class="tree" aria-label="知识树" ${treeOpen?'':'inert'}><div class="brand"><span class="brand-symbol">∠</span>物理手记</div><div class="tree-caption">我的知识树 ${btn('tree','⇤ 收起','tree-hide','aria-label="收起知识树"')}</div>${btn('tree-locate','◎ 定位当前知识点','tree-locate')}<nav class="tree-navigation" aria-label="知识目录">${tree()}</nav><div class="tree-footer">一节一节，积累自己的教学体系。<br><br>第一版原型 · 01 个知识点</div></aside><main><header class="topbar"><div class="topbar-left">${btn('tree',treeOpen?'☰ 收起目录':'☰ 知识树','','aria-label="切换知识树"')}<span class="muted">个人备课工作台</span></div><div class="top-actions">${btn('search','⌕ 搜索')}${btn('board','▤ 板书')}${btn('edit',edit?'✓ 完成整理':'⠿ 整理',edit?'primary':'outline')}${btn('more','•••','','aria-label="更多操作"')}</div></header><div class="page"><nav class="breadcrumb" aria-label="当前位置">${path(current).map(n=>btn('node',esc(n.title),'',`data-id="${n.id}"`)).join('<span>›</span>')}</nav><div class="heading"><div><div class="eyebrow">PHYSICS NOTEBOOK / 01</div><h1>${esc(node.title)}</h1>${current==='incline'?'<div class="tags"><span class="tag">力学</span><span class="tag">动力学模型</span><span class="tag">受力分析</span></div>':''}</div><div>${btn('publish','↗ 导出发布','primary')}${btn('add','＋ 添加内容','primary')}<div class="save-status ${storageOK?'':'storage-warning'}" style="text-align:right;margin-top:9px">${storageOK?'○ 内容与排序保存在此浏览器':'本次修改暂未持久保存'}</div></div></div>${current==='incline'?cards.workspace():`<div class="directory"><p class="muted">这是目录节点。第一版的完整内容位于「斜面问题」。</p>${node.parent?btn('node','← 返回上一级','',`data-id="${node.parent}"`):''}${state.nodes.filter(n=>n.parent===current).map(n=>btn('node',esc(n.title)+' →','',`data-id="${n.id}"`)).join('')}${btn('node','打开斜面问题 →','primary','data-id="incline"')}</div>`}</div></main></div>`;
+ cards.afterRender();
+}
+function show(title,html,cls=''){lastFocus=document.activeElement;modal.className=cls;modal.innerHTML=`<div class="modal-head"><h2>${esc(title)}</h2>${btn('close','✕','','aria-label="关闭"')}</div>${html}`;if(!modal.open)modal.showModal();}
+function close(){modal.close();lastFocus?.isConnected&&lastFocus.focus();}
+function addMenu(){show('添加到「斜面问题」',`<p class="muted" style="margin-bottom:15px">先收进来，之后再慢慢整理。</p><div class="add-grid">${[['image','▧','图片'],['text','T','文字笔记'],['formula','ƒ','公式'],['questions','▣','例题'],['mistake','!','易错点'],['board','▤','板书'],['link','↗','关联内容'],['module','＋','新建模块']].map(([type,icon,label])=>btn('new',`<strong>${icon}</strong>${label}`,'',`data-type="${type}"`)).join('')}</div>`);}
+function field(name,label,value='',tag='input',extra=''){return `<div class="form-row"><label for="f-${name}">${label}</label><${tag} id="f-${name}" name="${name}" ${extra}${tag==='input'?` value="${esc(value)}">`:`>${esc(value)}</${tag}>`}</div>`;}
+function editor(type,blockId=null,qId=null){const b=state.blocks.find(b=>b.id===blockId);const item=qId?b.items.find(q=>q.id===qId):b;const isQuestion=type==='questions',isImage=type==='image'||isQuestion;let imageId=item?.imageId;
+show(item?'编辑'+(qId?'例题':'内容'):'添加'+(labels[type]||'模块'),`<form id="editor"><input type="hidden" name="kind" value="${type}">${isImage?`<label class="upload">${isQuestion?'题目图片（可选，也可以直接写题干）':'选择图片，立即预览'}<input name="file" id="image-file" type="file" accept="image/*"></label><div id="image-preview">${item?imageHTML(item,'preview-image'):''}</div>`:''}${field('title','标题（可选）',item?.title||'')}${type==='image'?`<div class="form-row"><label for="f-imageType">类型</label><select name="imageType" id="f-imageType"><option value="image">普通图片</option><option value="questions">例题</option><option value="board">板书</option><option value="other">其他</option></select></div>`:''}${isImage?`<div class="form-row" id="category-row" ${!isQuestion?'hidden':''}><label for="f-category">例题分类</label><select id="f-category" name="category">${['基础','典型','变式','综合'].map(c=>`<option ${c===(item?.category||'典型')?'selected':''}>${c}</option>`).join('')}</select></div>${field('tags','标签（可选，用逗号分隔）',item?.tags||'')}`:''}${field('text',isQuestion?'题干（可选）':type==='image'?'备注（可选）':type==='formula'?'公式（每行一条，可写「名称 | 公式」）':'内容（每行一条）',item?.text||'', 'textarea')}${isQuestion?field('note','为什么值得讲（可选）',item?.note||'')+field('analysis','解析（可选）',item?.analysis||'','textarea')+field('boardSolution','板书解法（可选）',item?.boardSolution||'','textarea')+field('difficulty','难度（可选）',item?.difficulty||'★★'):type==='formula'?field('note','适用条件（可选）',item?.note||''):''}<div class="form-actions">${btn('close','取消','outline')}<button class="primary" type="submit">保存</button></div></form>`);
+const form=modal.querySelector('form');let pendingURL,pendingFile;
+if(type==='image'&&item?.imageKind)form.querySelector('[name=imageType]').value=item.imageKind;
+form.querySelector('[name=imageType]')?.addEventListener('change',e=>form.querySelector('#category-row').hidden=e.target.value!=='questions');
+form.querySelector('[name=file]')?.addEventListener('change',e=>{const file=e.target.files[0];if(!file)return;if(!file.type.startsWith('image/')){toast('请选择图片文件');e.target.value='';return;}if(pendingURL)URL.revokeObjectURL(pendingURL);pendingFile=file;pendingURL=URL.createObjectURL(file);form.querySelector('#image-preview').innerHTML=`<img class="preview-image" src="${pendingURL}" alt="图片预览">`;});
+form.addEventListener('submit',e=>{e.preventDefault();const f=new FormData(form),value=k=>String(f.get(k)||'').trim();if(type==='image'&&!imageId&&!pendingURL){toast('请先选择一张图片');return;}if(!isImage&&!value('text')&&!value('title')){toast('写一句内容或标题就可以保存');return;}if(pendingURL){imageId=uid();images.set(imageId,pendingURL);pendingURL=null;}const targetType=type==='image'?value('imageType'):type;const base={...(item||{}),title:value('title')|| (targetType==='questions'?'未命名例题':type==='image'?'未命名图片':labels[type]||'新模块'),text:value('text'),tags:value('tags'),...(imageId?{imageId}:{})};
+if(pendingFile)base.originalImage={assetId:imageId,storage:'session',fileName:pendingFile.name,mimeType:pendingFile.type,size:pendingFile.size};
+if(isQuestion||targetType==='questions'){const record={...base,id:qId||uid(),category:value('category')||'典型',difficulty:value('difficulty')||'★★',note:value('note')||(type==='image'?value('text'):''),analysis:value('analysis'),boardSolution:value('boardSolution')};if(qId){Object.assign(item,record);}else{let qb=state.blocks.find(x=>x.type==='questions');if(!qb){qb={id:uid(),type:'questions',title:'典型例题',items:[]};state.blocks.push(qb);}qb.items.push(record);qb.collapsed=false;if(blockId)state.blocks=state.blocks.filter(x=>x.id!==blockId);category='全部';}}
+else if(type==='node'){state.nodes.push({id:uid(),title:base.title,parent:current});expanded.add(current);}
+else{const result={...base,type:type==='module'?'text':type,id:blockId||uid(),...(type==='formula'?{note:value('note')}:{})};if(type==='image')result.imageKind=targetType; if(item)Object.assign(item,result);else state.blocks.push(result);}
+save();close();current='incline';libraryType='all';render();toast('已保存');});
+modal.addEventListener('close',()=>{if(pendingURL)URL.revokeObjectURL(pendingURL);},{once:true});}
+function board(){
+ const boards=state.blocks.filter(b=>b.type==='board');
+ const questions=state.blocks.filter(b=>b.type==='questions').flatMap(b=>b.items).filter(q=>state.boardQuestions.includes(q.id));
+ show('斜面问题 · 课堂板书',`<div class="board-toolbar"><div class="tabs">${btn('board-mode','结构化板书',boardMode==='structure'?'selected':'','data-mode="structure"')}${btn('board-mode','黑板预览',boardMode==='chalk'?'selected':'','data-mode="chalk"')}</div>${btn('board-wide',boardWide?'收回抽屉':'展开抄写','outline',`aria-pressed="${boardWide}"`)}</div><div class="board-sheet copy-sheet ${boardMode==='chalk'?'chalk':''}"><div class="copy-heading"><span>课堂笔记 / 动力学模型</span><h3>固定斜面上的下滑物块</h3><p>条件：斜面固定，物块已在下滑且不脱离斜面；仅受重力、支持力和滑动摩擦力。μ 为动摩擦因数。</p></div>${boards.map(b=>`${(b.panels||[]).map((panel,i)=>`<section class="board-panel"><h4><span>0${i+1}</span>${esc(panel.title)}</h4><div class="board-pair"><figure>${window.drawBoardDiagram(panel.scene)}<figcaption>${esc(panel.caption)}</figcaption></figure><div class="board-equations">${panel.formulas.map(([label,formula])=>`<div class="board-equation"><span>${esc(label)}</span><div>${esc(formula)}</div></div>`).join('')}</div></div><p class="board-reminder">${esc(panel.note)}</p></section>`).join('')}${(b.text||'').split('\n').filter(Boolean).map(l=>{const [title,...rest]=l.split('｜');return `<div class="board-line"><b>${esc(title)}</b>${esc(rest.join('｜'))}</div>`;}).join('')}`).join('')}${state.blocks.filter(b=>b.type==='image'&&b.imageKind==='board').map(b=>imageHTML(b)).join('')}${questions.map(q=>`<div class="board-question"><b>例题 · ${esc(q.title)}</b>${imageHTML(q)}<p>${esc(q.text)}</p></div>`).join('')}${boards.length||questions.length?'':'<p>还没有板书。可以添加板书内容，或把例题加入这里。</p>'}</div>`,`drawer board-drawer ${boardWide?'board-wide':''}`);
+}
+function search(){show('搜索当前知识点',`<input id="search-input" placeholder="试试：摩擦、受力、公式" aria-label="搜索内容"><div id="search-results"><p class="empty">搜索标题、文字、题目和标签</p></div>`);const input=modal.querySelector('input');input.addEventListener('input',()=>{const q=input.value.trim().toLowerCase();const hits=[];if(q)state.blocks.forEach(b=>{if([b.title,b.text,b.tags,b.note].join(' ').toLowerCase().includes(q))hits.push({b,title:b.title,type:labels[b.type]||'内容'});if(b.items)b.items.forEach(i=>{if([i.title,i.text,i.tags,i.note].join(' ').toLowerCase().includes(q))hits.push({b,title:i.title,type:'例题 · '+i.category});});});modal.querySelector('#search-results').innerHTML=hits.length?hits.map(h=>btn('result',`${esc(h.title)}<small>${esc(h.type)} · 斜面问题</small>`,'search-result',`data-id="${h.b.id}"`)).join(''):`<p class="empty">${q?'没有找到，试试其他关键词。':'搜索标题、文字、题目和标签'}</p>`;});input.focus();}
+function move(id,offset){const list=ordered();const i=list.findIndex(b=>b.id===id),j=i+offset;if(j<0||j>=list.length)return;[list[i],list[j]]=[list[j],list[i]];state.orders[state.template]=list.map(b=>b.id);save();render();document.getElementById('block-'+id)?.scrollIntoView({block:'nearest'});}
+function confirmDelete(title,fn){show('删除'+title,`<p>删除后会从三个模板的共享内容中移除。</p><div class="form-actions">${btn('close','取消','outline')}${btn('confirm-delete','确认删除','primary')}</div>`);modal.querySelector('[data-action=confirm-delete]').onclick=()=>{fn();save();close();render();toast('已删除');};}
+function getQ(id){return state.blocks.filter(b=>b.type==='questions').flatMap(b=>b.items).find(q=>q.id===id);}
+function handle(e){const el=e.target.closest('[data-action]');if(!el)return;
+const action=el.dataset.action;
+if(publication&&!['card-open','question-open','overview','deck-select','deck-prev','deck-next','node','branch','tree','tree-locate','board','board-mode','board-wide','close','zoom','search','result','parent','filter','analysis'].includes(action))return;
+if(action==='publish'){show('导出发布内容',`<p>把当前文字、图片、例题、板书和卡片顺序打包成一个网页文件。</p><p style="margin-top:12px">下载 <b>斜面问题-发布包.zip</b>，解压后取出包内的 <b>index.html</b>，上传到 GitHub Pages 的发布目录，替换原文件。Pad 刷新即可查看。</p><p class="muted" style="margin-top:12px">发布版只供阅读，不读取 Pad 的旧草稿。发布到公开网站的内容可被他人访问，请确认其中没有不想公开的资料。这里只下载文件，不会自动上传。</p><div class="form-actions">${btn('close','取消','outline')}${btn('publish-download','下载发布包','primary')}</div>`);return;}
+if(action==='publish-download'){close();window.PhysicsPublish.download(state,images,toast);return;}
+if(cards.handle(el))return;const {action:a,id,q,type}=el.dataset;const b=state.blocks.find(b=>b.id===id);switch(a){
+case 'tree':toggleTree();break;
+case 'branch':{const open=!expanded.has(id);open?expanded.add(id):expanded.delete(id);el.setAttribute('aria-expanded',String(open));const children=document.getElementById('children-'+id);children.classList.toggle('is-open',open);children.inert=!open;break;}
+case 'tree-locate':path(current).forEach(n=>expanded.add(n.id));render();app.querySelector('[aria-current="page"]')?.scrollIntoView({block:'nearest'});break;
+case 'node':current=id;path(id).forEach(n=>expanded.add(n.id));if(innerWidth<=900)treeOpen=false;render();break;
+case 'edit':edit=!edit;render();break;
+case 'template':state.template=el.dataset.template;save();render();break;
+case 'library':libraryType=type;render();break;
+case 'collapse':b.collapsed=!b.collapsed;save();render();break;
+case 'add':addMenu();break;
+case 'new':editor(type);break;
+case 'close':close();break;
+case 'board':board();break;
+case 'board-mode':boardMode=el.dataset.mode;board();break;
+case 'board-wide':boardWide=!boardWide;board();break;
+case 'filter':category=el.dataset.category;render();break;
+case 'block-edit':if(b.type==='questions'){show('编辑例题模块',`<form id="rename">${field('title','模块名称',b.title)}<p class="muted">单道题目请使用题目卡片里的「编辑」。</p><div class="form-actions"><button type="submit" class="primary">保存</button></div></form>`);modal.querySelector('form').onsubmit=e=>{e.preventDefault();b.title=new FormData(e.target).get('title')||'典型例题';save();close();render();};}else editor(b.type,id);break;
+case 'block-delete':confirmDelete('「'+b.title+'」',()=>{state.blocks=state.blocks.filter(x=>x.id!==id);});break;
+case 'question-delete':confirmDelete('这道例题',()=>{b.items=b.items.filter(x=>x.id!==q);state.boardQuestions=state.boardQuestions.filter(x=>x!==q);});break;
+case 'question-edit':editor('questions',id,q);break;
+case 'q-up':case 'q-down':{const i=b.items.findIndex(x=>x.id===q),j=i+(a==='q-up'?-1:1);if(j>=0&&j<b.items.length){[b.items[i],b.items[j]]=[b.items[j],b.items[i]];save();render();}break;}
+case 'up':move(id,-1);break;case 'down':move(id,1);break;
+case 'analysis':{const item=getQ(q);show(item.title+' · 解析',`<p class="plain-text">${esc(item.analysis||'这道题还没有解析。进入编辑模式后可以补充。')}</p>`);break;}
+case 'board-add':if(!state.boardQuestions.includes(q)){state.boardQuestions.push(q);save();render();toast('已加入板书');}else toast('这道题已经在板书中');break;
+case 'question-more':show('例题 · 更多',`${btn('student','标记为学生错题','outline')}${state.boardQuestions.includes(q)?btn('board-remove','从板书移除','outline',`data-q="${q}"`):''}`);break;
+case 'student':toast('此功能将在后续版本开发。');break;
+case 'board-remove':state.boardQuestions=state.boardQuestions.filter(x=>x!==q);save();close();render();toast('已从板书移除');break;
+case 'zoom':{const src=images.get(el.dataset.image);if(src)show('图片预览',`<img src="${esc(src)}" alt="放大的内容图片">`,'zoom');break;}
+case 'search':search();break;
+case 'result':b.collapsed=false;current='incline';libraryType='all';category='全部';close();render();document.getElementById('block-'+id)?.scrollIntoView({block:'start',behavior:'smooth'});break;
+case 'more':show('工作台选项',`${btn('parent','← 返回上一级','outline')}${btn('expand-all','展开所有模块','outline')}${btn('collapse-all','收起所有模块','outline')}<p class="muted" style="margin-top:18px">第一版仅在当前浏览器保存文字、例题资料与模板排序。图片为临时预览；学生错题入口是演示。没有云同步。</p>`);break;
+case 'parent':{const n=state.nodes.find(n=>n.id===current);if(n.parent)current=n.parent;close();render();break;}
+case 'expand-all':case 'collapse-all':state.blocks.forEach(b=>b.collapsed=a==='collapse-all');save();close();render();break;
+}}
+app.addEventListener('click',handle);modal.addEventListener('click',handle);modal.addEventListener('click',e=>{if(e.target===modal){const r=modal.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)close();}});
+const cards=window.createCardWorkbench({state,btn,esc,body,save,render,show,close,editor,board,toast,uid,images,imageHTML,getEditing:()=>edit,setEditing:value=>edit=value,setCurrent:value=>current=value,resetCategory:()=>category='全部'});
+document.querySelector('#quick-images').addEventListener('change',event=>{cards.ingest([...event.target.files]);event.target.value='';});
+if(!publication)window.installCardGestures({arrange:()=>cards.setArrange(true,false),render,reorder:(...args)=>cards.reorder(...args),remove:id=>cards.remove(id)});
+render();
+if(publication){document.body.classList.add('published-reader');const note=document.createElement('p');note.className='publication-note';note.textContent='课堂阅读版 · 发布时间 '+new Date(publication.version).toLocaleString('zh-CN')+' · 内容由电脑端统一发布';document.body.prepend(note);}
+})();
+</script></body></html>
